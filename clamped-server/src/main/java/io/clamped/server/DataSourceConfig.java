@@ -1,0 +1,55 @@
+package io.clamped.server;
+
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import javax.sql.DataSource;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Properties;
+
+/**
+ * Builds a DataSource from (in priority order):
+ *   1. Environment variables: CLAMPED_JDBC_URL, CLAMPED_USERNAME, CLAMPED_PASSWORD
+ *   2. Spring application.properties: spring.datasource.url / username / password
+ *   3. ~/.clamped/config.properties (same file used by the CLI)
+ */
+@Configuration
+public class DataSourceConfig {
+
+    @Bean
+    public DataSource dataSource() {
+        String url      = System.getenv("CLAMPED_JDBC_URL");
+        String username = System.getenv("CLAMPED_USERNAME");
+        String password = System.getenv("CLAMPED_PASSWORD");
+
+        // Fall back to ~/.clamped/config.properties if env vars not set
+        if (url == null) {
+            Properties props = loadConfigFile();
+            url      = props.getProperty("jdbcUrl",  "jdbc:postgresql://localhost:5432/clamped_db");
+            username = props.getProperty("username", "postgres");
+            password = props.getProperty("password", "");
+        }
+
+        return DataSourceBuilder.create()
+                .url(url)
+                .username(username)
+                .password(password)
+                .driverClassName("org.postgresql.Driver")
+                .build();
+    }
+
+    private Properties loadConfigFile() {
+        Path configFile = Paths.get(System.getProperty("user.home"), ".clamped", "config.properties");
+        Properties props = new Properties();
+        if (configFile.toFile().exists()) {
+            try (FileInputStream fis = new FileInputStream(configFile.toFile())) {
+                props.load(fis);
+            } catch (IOException ignored) {}
+        }
+        return props;
+    }
+}

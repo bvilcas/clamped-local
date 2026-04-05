@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: clamped-postgres
+    environment:
+      POSTGRES_DB: clamped_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "851686"
+    ports:
+      - "5432:5432"
+    volumes:
+      - clamped-pgdata:/var/lib/postgresql/data
+
+volumes:
+  clamped-pgdata:

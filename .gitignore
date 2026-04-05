@@ -1,0 +1,42 @@
+# Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven wrapper
+!mvnw.cmd
+!.mvn/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node / frontend
+clamped-ui/node_modules/
+clamped-ui/dist/
+
+# Claude Code
+CLAUDE.md
+
+# Environment / secrets
+.env
+*.env.local
+config.properties
+~/.clamped/
+
+# Logs
+*.log
+logs/
+
+# Spring Boot
+clamped-server/src/main/resources/static/
