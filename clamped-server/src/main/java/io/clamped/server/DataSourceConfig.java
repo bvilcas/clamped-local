@@ -26,6 +26,11 @@ public class DataSourceConfig {
         String username = System.getenv("CLAMPED_USERNAME");
         String password = System.getenv("CLAMPED_PASSWORD");
 
+        // If CLAMPED_JDBC_URL is in postgresql:// format, convert it
+        if (url != null && url.startsWith("postgresql://")) {
+            url = "jdbc:postgresql://" + url.substring("postgresql://".length());
+        }
+
         // Fall back to DATABASE_URL (Railway standard) if CLAMPED_JDBC_URL not set
         if (url == null) {
             String databaseUrl = System.getenv("DATABASE_URL");
