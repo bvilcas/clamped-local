@@ -34,7 +34,13 @@ public class DemoSeeder implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         if (!demoMode) return;
 
-        Integer count = jdbc.queryForObject("SELECT COUNT(*) FROM clamped_events", Integer.class);
+        Integer count;
+        try {
+            count = jdbc.queryForObject("SELECT COUNT(*) FROM clamped_events", Integer.class);
+        } catch (Exception e) {
+            System.err.println("[demo] Could not connect to DB, skipping seed: " + e.getMessage());
+            return;
+        }
         if (count != null && count > 0) return;
 
         System.out.println("[demo] Seeding sample data...");
