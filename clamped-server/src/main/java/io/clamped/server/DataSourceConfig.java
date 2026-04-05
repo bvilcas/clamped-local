@@ -26,7 +26,29 @@ public class DataSourceConfig {
         String username = System.getenv("CLAMPED_USERNAME");
         String password = System.getenv("CLAMPED_PASSWORD");
 
-        // Fall back to ~/.clamped/config.properties if env vars not set
+        // Fall back to DATABASE_URL (Railway standard) if CLAMPED_JDBC_URL not set
+        if (url == null) {
+            String databaseUrl = System.getenv("DATABASE_URL");
+            if (databaseUrl != null) {
+                // Convert postgresql://user:pass@host:port/db to jdbc:postgresql://host:port/db
+                url = databaseUrl.replaceFirst("^postgresql://", "jdbc:postgresql://");
+                // Extract username and password from URL if not set separately
+                if (username == null || password == null) {
+                    try {
+                        java.net.URI uri = new java.net.URI(databaseUrl.replaceFirst("^postgresql://", "http://"));
+                        String userInfo = uri.getUserInfo();
+                        if (userInfo != null && userInfo.contains(":")) {
+                            username = userInfo.split(":")[0];
+                            password = userInfo.split(":")[1];
+                            // Remove credentials from URL
+                            url = "jdbc:postgresql://" + uri.getHost() + ":" + uri.getPort() + uri.getPath();
+                        }
+                    } catch (Exception ignored) {}
+                }
+            }
+        }
+
+        // Fall back to ~/.clamped/config.properties if no env vars set
         if (url == null) {
             Properties props = loadConfigFile();
             url      = props.getProperty("jdbcUrl",  "jdbc:postgresql://localhost:5432/clamped_db");
