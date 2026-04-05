@@ -1,6 +1,6 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "mvn -pl clamped-core,clamped-server -am package -DskipTests"
+buildCommand = "cd clamped-ui && npm install && npm run build && cd .. && mvn -pl clamped-core,clamped-server -am package -DskipTests"
 
 [deploy]
 startCommand = "java -DDEMO_MODE=true -jar clamped-server/target/clamped-server-1.0.0-SNAPSHOT.jar"
