@@ -3,5 +3,5 @@ builder = "NIXPACKS"
 buildCommand = "cd clamped-ui && npm install && npm run build && cd .. && mvn -pl clamped-core,clamped-server -am package -DskipTests"
 
 [deploy]
-startCommand = "java -Ddemo.mode=true -jar clamped-server/target/clamped-server-1.0.0-SNAPSHOT.jar"
+startCommand = "bash start.sh"
 restartPolicyType = "ON_FAILURE"
