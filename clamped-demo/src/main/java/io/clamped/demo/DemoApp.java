@@ -49,6 +49,19 @@ public class DemoApp {
     }
 
     private static Properties loadConfig() throws IOException {
+        String url      = System.getenv("SPRING_DATASOURCE_URL");
+        String username = System.getenv("SPRING_DATASOURCE_USERNAME");
+        String password = System.getenv("SPRING_DATASOURCE_PASSWORD");
+
+        if (url != null && username != null && password != null) {
+            Properties props = new Properties();
+            props.setProperty("jdbcUrl",  url);
+            props.setProperty("username", username);
+            props.setProperty("password", password);
+            return props;
+        }
+
+        // Fall back to local config file for development
         Properties props = new Properties();
         var path = Paths.get(System.getProperty("user.home"), ".clamped", "config.properties");
         try (var fis = new FileInputStream(path.toFile())) {
