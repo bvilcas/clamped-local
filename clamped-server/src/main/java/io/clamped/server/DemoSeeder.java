@@ -3,6 +3,7 @@ package io.clamped.server;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,7 @@ import java.util.Random;
  * Enable with: DEMO_MODE=true java -jar clamped-server.jar
  */
 @Component
+@Order(2)
 public class DemoSeeder implements ApplicationRunner {
 
     private final JdbcTemplate jdbc;
