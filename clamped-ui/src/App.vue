@@ -49,7 +49,7 @@
       <v-list nav density="compact">
         <v-list-item
           :prepend-icon="isDark ? 'mdi-weather-sunny' : 'mdi-weather-night'"
-          :title="isDark ? 'Light mode' : 'Dark mode'"
+          :title="isDark ? 'Light Mode' : 'Dark Mode'"
           rounded="lg"
           @click="toggleTheme"
         />
