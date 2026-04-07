@@ -175,12 +175,29 @@ async function bulkDelete() {
 }
 
 function exportCsv() {
-  const cols = ['id','timestamp','firstSeen','appName','environment','status','severity','tag','message','occurrenceCount','exceptionClass','sourceFile','resolutionNotes']
-  const rows = events.value.map(e => cols.map(h => {
-    const v = (e as any)[h]
-    return v == null ? '' : `"${String(v).replace(/"/g, '""')}"`
+  const timeKeys = new Set(['firstSeen', 'timestamp'])
+  const cols: { key: string; label: string }[] = [
+    { key: 'id',              label: 'ID' },
+    { key: 'status',          label: 'Status' },
+    { key: 'firstSeen',       label: 'Created At' },
+    { key: 'severity',        label: 'Severity' },
+    { key: 'tag',             label: 'Tag' },
+    { key: 'message',         label: 'Message' },
+    { key: 'occurrenceCount', label: 'Occurrences' },
+    { key: 'timestamp',       label: 'Last Seen' },
+    { key: 'appName',         label: 'App' },
+    { key: 'environment',     label: 'Environment' },
+    { key: 'exceptionClass',  label: 'Exception Class' },
+    { key: 'sourceFile',      label: 'Source File' },
+    { key: 'resolutionNotes', label: 'Resolution Notes' },
+  ]
+  const rows = events.value.map(e => cols.map(({ key }) => {
+    const v = (e as any)[key]
+    if (v == null) return ''
+    const display = timeKeys.has(key) ? fmt(v) : String(v)
+    return `"${display.replace(/"/g, '""')}"`
   }).join(','))
-  const csv = [cols.join(','), ...rows].join('\n')
+  const csv = [cols.map(c => c.label).join(','), ...rows].join('\n')
   const blob = new Blob([csv], { type: 'text/csv' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
