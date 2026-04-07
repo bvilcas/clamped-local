@@ -2,7 +2,6 @@ package io.clamped.demo;
 
 import io.clamped.Clamped;
 import io.clamped.ClampedConfig;
-import io.clamped.Severity;
 
 import java.io.FileInputStream;
 import java.io.IOException;
