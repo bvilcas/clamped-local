@@ -175,7 +175,7 @@ async function bulkDelete() {
 }
 
 function exportCsv() {
-  const cols = ['id','status','severity','tag','message','occurrenceCount','firstSeen','sourceFile','sourceLine','sourceMethod','exceptionClass']
+  const cols = ['id','timestamp','firstSeen','appName','environment','status','severity','tag','message','occurrenceCount','exceptionClass','sourceFile','resolutionNotes']
   const rows = events.value.map(e => cols.map(h => {
     const v = (e as any)[h]
     return v == null ? '' : `"${String(v).replace(/"/g, '""')}"`
