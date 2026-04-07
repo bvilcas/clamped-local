@@ -10,7 +10,7 @@ No cloud. No DSN keys. No pricing tiers. Just a JAR and a dashboard you own.
 
 - **One-line error capture**: `Clamped.add(e)` in any catch block
 - **Automatic deduplication**: same error 1000 times = 1 row + occurrence counter
-- **Web dashboard**: filterable events table, stats page, bulk actions, CSV export
+- **Web dashboard**: filterable events table, stats page, bulk actions, CSV export, resolve with notes, collapsible nav, dark/light mode
 - **CLI**: triage events directly from the terminal without opening a browser
 - **Zero overhead**: async queue, never blocks your app
 - **Graceful degradation**: if Postgres is down, events queue in memory and drop silently

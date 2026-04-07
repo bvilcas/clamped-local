@@ -57,6 +57,13 @@ public class SchemaInitializer implements ApplicationRunner {
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_clamped_tag ON clamped_events(tag)");
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_clamped_first_seen ON clamped_events(first_seen DESC)");
 
+            // Add resolution_notes column if it doesn't already exist
+            java.sql.ResultSet rs = conn.getMetaData().getColumns(null, null, "clamped_events", "resolution_notes");
+            if (!rs.next()) {
+                stmt.execute("ALTER TABLE clamped_events ADD COLUMN resolution_notes TEXT");
+            }
+            rs.close();
+
             System.out.println("[schema] clamped_events table ready.");
         } catch (Exception e) {
             System.err.println("[schema] Failed to initialize schema: " + e.getMessage());

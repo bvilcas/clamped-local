@@ -20,4 +20,5 @@ public class EventRow {
     public String fingerprint;
     public int occurrenceCount;
     public String firstSeen;
+    public String resolutionNotes;
 }

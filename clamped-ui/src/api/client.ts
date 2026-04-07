@@ -27,7 +27,9 @@ export const eventsApi = {
   update(id: number, data: { message: string; status: string; severity: string }) {
     return api.put(`/events/${id}`, data)
   },
-  resolve(id: number) { return api.post(`/events/${id}/resolve`) },
+  resolve(id: number, notes?: string) {
+    return api.post(`/events/${id}/resolve`, notes ? { notes } : undefined)
+  },
   ack(id: number)     { return api.post(`/events/${id}/ack`) },
   revert(id: number)  { return api.post(`/events/${id}/revert`) },
   delete(id: number)  { return api.delete(`/events/${id}`) },

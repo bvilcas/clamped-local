@@ -18,6 +18,7 @@ export interface ClampedEvent {
   fingerprint: string
   occurrenceCount: number
   firstSeen: string
+  resolutionNotes: string | null
 }
 
 export interface TagCount {

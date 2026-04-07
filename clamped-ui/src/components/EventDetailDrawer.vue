@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer v-model="open" location="right" width="520" temporary>
+  <v-navigation-drawer v-model="open" location="right" width="520" temporary :class="{ 'drawer-light': !isDark }">
     <template v-if="event">
       <v-toolbar color="surface" elevation="0" density="compact">
         <v-toolbar-title class="text-subtitle-1 font-weight-bold">Event #{{ event.id }}</v-toolbar-title>
@@ -8,7 +8,7 @@
         </template>
       </v-toolbar>
 
-      <v-divider />
+      <div class="ev-divider" />
 
       <v-container class="pa-4">
 
@@ -34,7 +34,7 @@
           <div class="field-value">{{ event.message }}</div>
         </div>
 
-        <v-divider class="mb-4" />
+        <div class="ev-divider" style="margin-bottom: 16px" />
 
         <!-- Two-column grid -->
         <v-row dense class="mb-2">
@@ -66,23 +66,30 @@
 
         <!-- Source -->
         <template v-if="event.sourceFile">
-          <v-divider class="my-4" />
+          <div class="ev-divider" style="margin: 16px 0" />
           <div class="field-label mb-1">Source</div>
           <div class="field-value mono">{{ event.sourceFile }}:{{ event.sourceLine }} ({{ event.sourceMethod }})</div>
         </template>
 
         <!-- Stack trace -->
         <template v-if="event.stacktrace">
-          <v-divider class="my-4" />
+          <div class="ev-divider" style="margin: 16px 0" />
           <div class="field-label mb-2">Stack Trace</div>
           <pre class="code-pre">{{ event.stacktrace }}</pre>
         </template>
 
         <!-- Metadata -->
         <template v-if="event.metadata && event.metadata !== '{}'">
-          <v-divider class="my-4" />
+          <div class="ev-divider" style="margin: 16px 0" />
           <div class="field-label mb-2">Metadata</div>
           <pre class="code-pre">{{ prettyMetadata }}</pre>
+        </template>
+
+        <!-- Resolution note -->
+        <template v-if="event.resolutionNotes">
+          <div class="ev-divider" style="margin: 16px 0" />
+          <div class="field-label mb-2">{{ event.status === 'RESOLVED' ? 'Resolution Note' : 'Previous Resolution Note' }}</div>
+          <div class="field-value" style="white-space: pre-wrap;">{{ event.resolutionNotes }}</div>
         </template>
 
       </v-container>
@@ -93,6 +100,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { ClampedEvent } from '../types'
+import { useAppTheme } from '../theme'
+
+const { isDark, severityColor, statusColor } = useAppTheme()
 
 const props = defineProps<{ event: ClampedEvent | null }>()
 const emit = defineEmits<{ close: [] }>()
@@ -116,22 +126,15 @@ function fmt(ts: string | null) {
   return ts ? ts.substring(0, 19).replace('T', ' ') : '—'
 }
 
-function severityColor(s: string) {
-  return { LOW: '#64b5f6', MEDIUM: '#ffa726', HIGH: '#ff7043', CRITICAL: '#ef5350' }[s] ?? '#9e9e9e'
-}
-
-function statusColor(s: string) {
-  return { OPEN: 'default', IN_PROGRESS: 'blue', RESOLVED: 'green' }[s] ?? 'default'
-}
 </script>
 
 <style scoped>
 .field-label {
-  font-size: 0.68rem;
-  font-weight: 600;
+  font-size: 0.65rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.09em;
-  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.25);
   margin-bottom: 3px;
 }
 
@@ -158,5 +161,26 @@ function statusColor(s: string) {
   word-break: break-all;
   color: rgba(255,255,255,0.7);
   line-height: 1.6;
+}
+
+
+.ev-divider {
+  border: none;
+  border-top: 1px solid var(--clamped-border);
+  margin: 0;
+}
+
+.drawer-light .field-label {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.drawer-light .field-value {
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.drawer-light .code-pre {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.75);
 }
 </style>

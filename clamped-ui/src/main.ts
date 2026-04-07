@@ -21,7 +21,7 @@ const vuetify = createVuetify({
   components,
   directives,
   theme: {
-    defaultTheme: 'dark',
+    defaultTheme: localStorage.getItem('theme') ?? 'dark',
   },
 })
 

@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <div class="d-flex align-center mb-4">
-      <div class="text-h5">Stats</div>
+      <div class="text-h5 font-weight-semibold">Stats</div>
     </div>
 
     <v-progress-circular v-if="loading" indeterminate class="mt-8 d-block mx-auto" />
@@ -11,109 +11,112 @@
       <!-- Summary cards -->
       <v-row class="mb-3" dense>
         <v-col cols="6" sm="3">
-          <v-card class="stat-card" variant="outlined">
-            <v-card-text class="pa-3 text-center">
-              <div class="stat-number text-white">{{ total }}</div>
-              <div class="stat-label">Total Events</div>
-            </v-card-text>
-          </v-card>
+          <div class="card-wrap">
+            <v-card class="stat-card" variant="flat">
+              <v-card-text class="pa-3 text-center">
+                <div class="stat-number text-white">{{ total }}</div>
+                <div class="stat-label">Total Events</div>
+              </v-card-text>
+            </v-card>
+          </div>
         </v-col>
         <v-col v-for="item in statusItems" :key="item.status" cols="6" sm="3">
-          <v-card class="stat-card clickable" variant="outlined" :style="{ borderColor: item.borderColor }" @click="go(item.status)">
-            <v-card-text class="pa-3 text-center">
-              <div class="stat-number" :style="{ color: item.borderColor }">{{ item.count }}</div>
-              <div class="stat-label">{{ item.label }}</div>
-            </v-card-text>
-          </v-card>
+          <div class="card-wrap" style="cursor:pointer" @click="go(item.status)">
+            <v-card class="stat-card clickable" variant="flat">
+              <v-card-text class="pa-3 text-center">
+                <div class="stat-number" :style="{ color: item.color }">{{ item.count }}</div>
+                <div class="stat-label">{{ item.label }}</div>
+              </v-card-text>
+            </v-card>
+          </div>
         </v-col>
       </v-row>
 
       <!-- Timeline -->
       <v-row class="mb-3" dense>
         <v-col cols="12">
-          <v-card variant="outlined">
-            <v-card-text class="pa-3">
-              <div class="section-title mb-2">Events — Last 24h</div>
-              <div v-if="!stats.timeline || stats.timeline.length === 0" class="empty-state py-1">No events in the last 24 hours</div>
-              <div style="height:90px;position:relative">
-                <Bar :data="chartData" :options="chartOptions" />
-              </div>
-            </v-card-text>
-          </v-card>
+          <div class="card-wrap">
+            <v-card variant="flat">
+              <v-card-text class="pa-3">
+                <div class="section-title mb-2">Events — Last 24h</div>
+                <div v-if="!stats.timeline || stats.timeline.length === 0" class="empty-state py-1">No events in the last 24 hours</div>
+                <div style="height:90px;position:relative">
+                  <Bar :data="chartData" :options="chartOptions" />
+                </div>
+              </v-card-text>
+            </v-card>
+          </div>
         </v-col>
       </v-row>
 
       <!-- Severity + Tags -->
       <v-row class="mb-3" dense>
-        <!-- Severity: donut-style row with color blocks -->
         <v-col cols="12" md="6">
-          <v-card variant="outlined" height="100%">
-            <v-card-text class="pa-3">
-              <div class="section-title mb-2">By Severity</div>
-              <div v-for="(count, severity) in severityOrdered" :key="severity" class="sev-row mb-2">
-                <div class="sev-dot" :style="{ background: severityColor(String(severity)) }" />
-                <span class="sev-label" :style="{ color: severityColor(String(severity)) }">{{ severity }}</span>
-                <div class="sev-bar-track">
-                  <div class="sev-bar-fill" :style="{ width: (count / maxSeverity * 100) + '%', background: severityColor(String(severity)) }" />
+          <div class="card-wrap h-100">
+            <v-card variant="flat" height="100%">
+              <v-card-text class="pa-3">
+                <div class="section-title mb-2">By Severity</div>
+                <div v-for="(count, severity) in severityOrdered" :key="severity" class="sev-row mb-2">
+                  <div class="sev-dot" :style="{ background: severityColor(String(severity)) }" />
+                  <span class="sev-label" :style="{ color: severityColor(String(severity)) }">{{ severity }}</span>
+                  <div class="sev-bar-track">
+                    <div class="sev-bar-fill" :style="{ width: (count / maxSeverity * 100) + '%', background: severityColor(String(severity)) }" />
+                  </div>
+                  <span class="sev-count">{{ count }}</span>
                 </div>
-                <span class="sev-count">{{ count }}</span>
-              </div>
-            </v-card-text>
-          </v-card>
+              </v-card-text>
+            </v-card>
+          </div>
         </v-col>
-
-        <!-- Tags: chips -->
         <v-col cols="12" md="6">
-          <v-card variant="outlined" height="100%">
-            <v-card-text class="pa-3">
-              <div class="section-title mb-2">Top Tags</div>
-              <div v-if="stats.topTags.length === 0" class="empty-state">No tags yet</div>
-              <div class="tag-grid">
-                <div
-                  v-for="t in stats.topTags.slice(0, 12)" :key="t.tag"
-                  class="tag-pill"
-                  style="cursor:pointer"
-                  @click="goTag(t.tag)"
-                >
-                  <span class="tag-pill-name">{{ t.tag }}</span>
-                  <span class="tag-pill-count">{{ t.count }}</span>
+          <div class="card-wrap h-100">
+            <v-card variant="flat" height="100%">
+              <v-card-text class="pa-3">
+                <div class="section-title mb-2">Top Tags</div>
+                <div v-if="stats.topTags.length === 0" class="empty-state">No tags yet</div>
+                <div class="tag-grid">
+                  <div v-for="t in stats.topTags.slice(0, 12)" :key="t.tag" class="tag-pill" style="cursor:pointer" @click="goTag(t.tag)">
+                    <span class="tag-pill-name">{{ t.tag }}</span>
+                    <span class="tag-pill-count">{{ t.count }}</span>
+                  </div>
                 </div>
-              </div>
-            </v-card-text>
-          </v-card>
+              </v-card-text>
+            </v-card>
+          </div>
         </v-col>
       </v-row>
 
       <!-- Exception classes + Hot spots -->
       <v-row dense>
-        <!-- Exception classes: ranked list -->
         <v-col cols="12" md="6">
-          <v-card variant="outlined" height="100%">
-            <v-card-text class="pa-3">
-              <div class="section-title mb-2">Top Exception Classes</div>
-              <div v-if="!stats.topExceptionClasses || stats.topExceptionClasses.length === 0" class="empty-state">No exceptions captured</div>
-              <div v-for="(t, i) in (stats.topExceptionClasses ?? []).slice(0, 5)" :key="t.tag" class="rank-row">
-                <span class="rank-index">{{ i + 1 }}</span>
-                <span class="rank-name mono">{{ shortClass(t.tag) }}</span>
-                <span class="rank-count">{{ t.count }}</span>
-              </div>
-            </v-card-text>
-          </v-card>
+          <div class="card-wrap h-100">
+            <v-card variant="flat" height="100%">
+              <v-card-text class="pa-3">
+                <div class="section-title mb-2">Top Exception Classes</div>
+                <div v-if="!stats.topExceptionClasses || stats.topExceptionClasses.length === 0" class="empty-state">No exceptions captured</div>
+                <div v-for="(t, i) in (stats.topExceptionClasses ?? []).slice(0, 5)" :key="t.tag" class="rank-row">
+                  <span class="rank-index">{{ i + 1 }}</span>
+                  <span class="rank-name mono">{{ shortClass(t.tag) }}</span>
+                  <span class="rank-count">{{ t.count }}</span>
+                </div>
+              </v-card-text>
+            </v-card>
+          </div>
         </v-col>
-
-        <!-- Hot spots: ranked list with file style -->
         <v-col cols="12" md="6">
-          <v-card variant="outlined" height="100%">
-            <v-card-text class="pa-3">
-              <div class="section-title mb-2">Hot Spots</div>
-              <div v-if="!stats.topSourceLocations || stats.topSourceLocations.length === 0" class="empty-state">No source info captured</div>
-              <div v-for="(t, i) in (stats.topSourceLocations ?? []).slice(0, 5)" :key="t.tag" class="rank-row">
-                <span class="rank-index">{{ i + 1 }}</span>
-                <span class="rank-name mono">{{ t.tag }}</span>
-                <span class="rank-count">{{ t.count }}</span>
-              </div>
-            </v-card-text>
-          </v-card>
+          <div class="card-wrap h-100">
+            <v-card variant="flat" height="100%">
+              <v-card-text class="pa-3">
+                <div class="section-title mb-2">Hot Spots</div>
+                <div v-if="!stats.topSourceLocations || stats.topSourceLocations.length === 0" class="empty-state">No source info captured</div>
+                <div v-for="(t, i) in (stats.topSourceLocations ?? []).slice(0, 5)" :key="t.tag" class="rank-row">
+                  <span class="rank-index">{{ i + 1 }}</span>
+                  <span class="rank-name mono">{{ t.tag }}</span>
+                  <span class="rank-count">{{ t.count }}</span>
+                </div>
+              </v-card-text>
+            </v-card>
+          </div>
         </v-col>
       </v-row>
 
@@ -125,6 +128,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAppTheme } from '../theme'
 import { Bar } from 'vue-chartjs'
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
@@ -136,6 +140,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, ChartDataLabel
 const stats = ref<StatsResponse | null>(null)
 const loading = ref(false)
 const router = useRouter()
+const { isDark, severityColor, statusColorHex } = useAppTheme()
 
 onMounted(async () => {
   loading.value = true
@@ -151,12 +156,13 @@ const total = computed(() =>
 const statusItems = computed(() => {
   if (!stats.value) return []
   const meta = [
-    { status: 'OPEN',         label: 'Open',        borderColor: '#e0e0e0' },
-    { status: 'IN_PROGRESS',  label: 'In Progress', borderColor: '#42a5f5' },
-    { status: 'RESOLVED',     label: 'Resolved',    borderColor: '#66bb6a' },
+    { status: 'OPEN',        label: 'Open'        },
+    { status: 'IN_PROGRESS', label: 'In Progress' },
+    { status: 'RESOLVED',    label: 'Resolved'    },
   ]
   return meta.map(m => ({
     ...m,
+    color: statusColorHex(m.status),
     count: stats.value!.countByStatus[m.status] ?? 0,
   }))
 })
@@ -182,24 +188,29 @@ const chartData = computed(() => ({
   }]
 }))
 
-const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: { display: false },
-    datalabels: {
-      anchor: 'end' as const,
-      align: 'end' as const,
-      color: 'rgba(255,255,255,0.9)',
-      font: { size: 10, weight: 'bold' as const },
-      formatter: (value: number) => value > 0 ? value : '',
+const chartOptions = computed(() => {
+  const tickColor = isDark.value ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)'
+  const gridColor = isDark.value ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'
+  const labelColor = isDark.value ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.75)'
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        anchor: 'end' as const,
+        align: 'end' as const,
+        color: labelColor,
+        font: { size: 10, weight: 'bold' as const },
+        formatter: (value: number) => value > 0 ? value : '',
+      },
     },
-  },
-  scales: {
-    x: { grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { color: 'rgba(255,255,255,0.45)', font: { size: 10 } } },
-    y: { grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { color: 'rgba(255,255,255,0.45)', stepSize: 1, font: { size: 10 } }, grace: '15%' },
-  },
-}
+    scales: {
+      x: { grid: { color: gridColor }, ticks: { color: tickColor, font: { size: 10 } } },
+      y: { grid: { color: gridColor }, ticks: { color: tickColor, stepSize: 1, font: { size: 10 } }, grace: '15%' },
+    },
+  }
+})
 
 function go(status: string) {
   router.push({ path: '/', query: { status } })
@@ -209,9 +220,6 @@ function goTag(tag: string) {
   router.push({ path: '/', query: { tag } })
 }
 
-function severityColor(s: string) {
-  return { LOW: '#64b5f6', MEDIUM: '#ffa726', HIGH: '#ff7043', CRITICAL: '#ef5350' }[s] ?? '#9e9e9e'
-}
 
 function shortClass(fqn: string) {
   if (!fqn) return fqn
@@ -220,15 +228,70 @@ function shortClass(fqn: string) {
 }
 </script>
 
-<style scoped>
-/* ── Stat cards ── */
-.stat-card {
-  border-color: rgba(255,255,255,0.18) !important;
+<style>
+.v-theme--light .stat-label,
+.v-theme--light .section-title,
+.v-theme--light .empty-state {
+  color: rgba(0, 0, 0, 0.6) !important;
 }
 
-:deep(.v-card.v-card--variant-outlined) {
-  border-color: rgba(255,255,255,0.18) !important;
+.v-theme--light .stat-number.text-white {
+  color: rgba(0, 0, 0, 0.87) !important;
 }
+
+.v-theme--light .sev-bar-track {
+  background: rgba(0, 0, 0, 0.08) !important;
+}
+
+.v-theme--light .sev-count {
+  color: rgba(0, 0, 0, 0.87) !important;
+}
+
+.v-theme--light .tag-pill {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+
+.v-theme--light .tag-pill:hover {
+  background: rgba(0, 0, 0, 0.08) !important;
+}
+
+.v-theme--light .tag-pill-name {
+  color: rgba(0, 0, 0, 0.87) !important;
+}
+
+.v-theme--light .tag-pill-count {
+  color: rgba(0, 0, 0, 0.87) !important;
+  background: rgba(0, 0, 0, 0.08) !important;
+}
+
+
+.v-theme--light .rank-index {
+  color: rgba(0, 0, 0, 0.45) !important;
+}
+
+.v-theme--light .rank-name {
+  color: rgba(0, 0, 0, 0.87) !important;
+}
+
+.v-theme--light .rank-count {
+  color: rgba(0, 0, 0, 0.87) !important;
+}
+
+</style>
+
+<style scoped>
+/* ── Card wrappers (border owner) ── */
+.card-wrap {
+  border: 1px solid var(--clamped-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+/* ── Stat cards ── */
 .stat-card.clickable {
   cursor: pointer;
   transition: border-color 0.2s ease, background 0.2s ease;
@@ -319,7 +382,7 @@ function shortClass(fqn: string) {
   gap: 6px;
   padding: 4px 10px;
   border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid var(--clamped-border);
   background: rgba(255,255,255,0.04);
   transition: background 0.15s ease, border-color 0.15s ease;
 }
@@ -346,7 +409,7 @@ function shortClass(fqn: string) {
   align-items: center;
   gap: 10px;
   padding: 5px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid var(--clamped-border);
 }
 .rank-row:last-child {
   border-bottom: none;
@@ -376,4 +439,5 @@ function shortClass(fqn: string) {
 .mono {
   font-family: monospace;
 }
+
 </style>

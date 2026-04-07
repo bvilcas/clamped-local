@@ -23,7 +23,7 @@ public class EventRepository {
         StringBuilder sql = new StringBuilder(
             "SELECT id, timestamp, app_name, environment, severity, tag, message, " +
             "exception_class, stacktrace, metadata, source_file, source_line, source_method, " +
-            "thread_name, host, status, fingerprint, occurrence_count, first_seen " +
+            "thread_name, host, status, fingerprint, occurrence_count, first_seen, resolution_notes " +
             "FROM clamped_events WHERE 1=1");
 
         List<Object> params = new ArrayList<>();
@@ -58,7 +58,7 @@ public class EventRepository {
         List<EventRow> rows = jdbc.query(
             "SELECT id, timestamp, app_name, environment, severity, tag, message, " +
             "exception_class, stacktrace, metadata, source_file, source_line, source_method, " +
-            "thread_name, host, status, fingerprint, occurrence_count, first_seen " +
+            "thread_name, host, status, fingerprint, occurrence_count, first_seen, resolution_notes " +
             "FROM clamped_events WHERE id = ?",
             ROW_MAPPER, id);
         return rows.isEmpty() ? null : rows.get(0);
@@ -66,6 +66,16 @@ public class EventRepository {
 
     public int updateStatus(long id, String status) {
         return jdbc.update("UPDATE clamped_events SET status = ? WHERE id = ?", status, id);
+    }
+
+    public int resolve(long id, String notes) {
+        if (notes != null && !notes.isBlank()) {
+            return jdbc.update(
+                "UPDATE clamped_events SET status = 'RESOLVED', resolution_notes = ? WHERE id = ?",
+                notes, id);
+        }
+        return jdbc.update(
+            "UPDATE clamped_events SET status = 'RESOLVED' WHERE id = ?", id);
     }
 
     public int updateEvent(long id, String message, String status, String severity) {
@@ -117,6 +127,7 @@ public class EventRepository {
         e.fingerprint     = str(rs, "fingerprint");
         e.occurrenceCount = rs.getInt("occurrence_count");
         e.firstSeen       = str(rs, "first_seen");
+        e.resolutionNotes = str(rs, "resolution_notes");
         return e;
     };
 

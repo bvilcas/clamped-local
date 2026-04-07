@@ -36,8 +36,12 @@ public class EventController {
     }
 
     @PostMapping("/{id}/resolve")
-    public ResponseEntity<Void> resolve(@PathVariable long id) {
-        return updateStatus(id, "RESOLVED");
+    public ResponseEntity<Void> resolve(
+            @PathVariable long id,
+            @RequestBody(required = false) Map<String, String> body) {
+        String notes = (body != null) ? body.get("notes") : null;
+        int updated = repo.resolve(id, notes);
+        return updated > 0 ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
     @PostMapping("/{id}/ack")

@@ -5,7 +5,7 @@ package io.clamped.server;
  * Each row maps to the INSERT columns in order:
  * app_name, environment, severity, tag, message, exception_class, stacktrace,
  * metadata, source_file, source_line, source_method, thread_name, host,
- * status, fingerprint_key, occurrence_count, interval
+ * status, fingerprint_key, occurrence_count, interval, resolution_notes
  */
 public final class SeedData {
 
@@ -18,7 +18,7 @@ public final class SeedData {
           "java.lang.NullPointerException\n\tat io.clamped.demo.AuthService.validateToken(AuthService.java:22)\n\tat io.clamped.demo.AuthService.login(AuthService.java:10)",
           "{\"userId\":\"usr-123\",\"ip\":\"203.0.113.42\"}",
           "AuthService.java", 22, "validateToken", "main", "prod-web-01",
-          "OPEN", "seed-auth-npe", 7, "6 hours" },
+          "OPEN", "seed-auth-npe", 7, "6 hours", null },
 
         { "shop-service",  "production", "HIGH", "payment",
           "Card declined: insufficient funds for order ORD-1001",
@@ -26,7 +26,7 @@ public final class SeedData {
           "java.lang.RuntimeException: Card declined\n\tat io.clamped.demo.PaymentService.chargeCard(PaymentService.java:22)\n\tat io.clamped.demo.PaymentService.processOrder(PaymentService.java:10)",
           "{\"orderId\":\"ORD-1001\",\"userId\":\"usr-441\",\"amount\":149.99}",
           "PaymentService.java", 22, "chargeCard", "http-nio-8080-exec-3", "prod-web-01",
-          "OPEN", "seed-payment-declined", 14, "1 day" },
+          "OPEN", "seed-payment-declined", 14, "1 day", null },
 
         { "shop-service",  "production", "HIGH", "database",
           "Connection timeout after 30000ms — retries exhausted",
@@ -34,7 +34,7 @@ public final class SeedData {
           "java.sql.SQLTimeoutException\n\tat io.clamped.demo.DbPool.acquire(DbPool.java:17)\n\tat io.clamped.demo.OrderService.fetchOrder(OrderService.java:31)",
           "{\"pool\":\"primary\",\"maxWait\":30000}",
           "DbPool.java", 17, "acquire", "http-nio-8080-exec-7", "prod-web-02",
-          "IN_PROGRESS", "seed-db-timeout", 5, "2 days" },
+          "IN_PROGRESS", "seed-db-timeout", 5, "2 days", null },
 
         { "shop-service",  "production", "HIGH", "auth",
           "JWT token expired: expired-token-abc",
@@ -42,14 +42,14 @@ public final class SeedData {
           "java.lang.SecurityException: JWT token expired\n\tat io.clamped.demo.AuthService.validateToken(AuthService.java:24)\n\tat io.clamped.demo.AuthService.login(AuthService.java:10)",
           "{\"userId\":\"usr-999\",\"ip\":\"203.0.113.42\"}",
           "AuthService.java", 24, "validateToken", "main", "prod-web-01",
-          "OPEN", "seed-auth-expired", 3, "3 hours" },
+          "OPEN", "seed-auth-expired", 3, "3 hours", null },
 
         { "shop-service",  "staging",    "MEDIUM", "inventory",
           "Negative stock detected for SKU WIDGET-42",
           null, null,
           "{\"sku\":\"WIDGET-42\",\"stock\":-3}",
           "InventoryService.java", 15, "checkStock", "scheduler-1", "staging-01",
-          "IN_PROGRESS", "seed-inv-negative", 2, "4 days" },
+          "IN_PROGRESS", "seed-inv-negative", 2, "4 days", null },
 
         { "shop-service",  "production", "MEDIUM", "orders",
           "Order not found: ORD-99999",
@@ -57,14 +57,14 @@ public final class SeedData {
           "java.util.NoSuchElementException: Order not found\n\tat io.clamped.demo.OrderService.fetchOrder(OrderService.java:28)",
           "{\"orderId\":99999}",
           "OrderService.java", 28, "fetchOrder", "http-nio-8080-exec-2", "prod-web-01",
-          "OPEN", "seed-order-notfound", 9, "12 hours" },
+          "OPEN", "seed-order-notfound", 9, "12 hours", null },
 
         { "shop-service",  "production", "LOW", "cache",
           "Redis cache miss on startup — falling back to DB",
           null, null,
           "{\"key\":\"product-catalog-v2\"}",
           "CacheService.java", 19, "warmUp", "main", "prod-web-01",
-          "RESOLVED", "seed-cache-miss", 4, "7 days" },
+          "RESOLVED", "seed-cache-miss", 4, "7 days", "Cache warming job was not running on this instance. Restarted the cache warm-up scheduler and confirmed product-catalog-v2 key is populating on boot." },
 
         { "api-gateway",   "production", "CRITICAL", "uncaught",
           "Java heap space",
@@ -72,7 +72,7 @@ public final class SeedData {
           "java.lang.OutOfMemoryError: Java heap space\n\tat io.clamped.demo.Worker.processQueue(Worker.java:5)",
           "{}",
           "Worker.java", 5, "processQueue", "worker-thread-1", "prod-worker-01",
-          "OPEN", "seed-oom", 1, "30 minutes" },
+          "OPEN", "seed-oom", 1, "30 minutes", null },
 
         { "api-gateway",   "production", "HIGH", "payment",
           "Payment gateway timeout after 5000ms",
@@ -80,14 +80,14 @@ public final class SeedData {
           "java.net.SocketTimeoutException: Read timed out\n\tat io.clamped.demo.PaymentGateway.charge(PaymentGateway.java:44)",
           "{\"gateway\":\"stripe\",\"timeoutMs\":5000}",
           "PaymentGateway.java", 44, "charge", "http-nio-8080-exec-5", "prod-web-02",
-          "RESOLVED", "seed-gateway-timeout", 6, "5 days" },
+          "RESOLVED", "seed-gateway-timeout", 6, "5 days", "Stripe raised their timeout threshold on their end. Increased our client timeout to 10000ms as a fallback. Monitoring for recurrence." },
 
         { "shop-service",  "production", "LOW", "inventory",
           "Stock level below reorder threshold for SKU GADGET-7",
           null, null,
           "{\"sku\":\"GADGET-7\",\"stock\":0,\"reorderAt\":10}",
           "InventoryService.java", 22, "checkStock", "scheduler-1", "prod-web-01",
-          "OPEN", "seed-inv-low", 1, "2 hours" },
+          "OPEN", "seed-inv-low", 1, "2 hours", null },
 
         { "shop-service",  "production", "CRITICAL", "payment",
           "Duplicate transaction detected: TXN-8823",
@@ -95,7 +95,7 @@ public final class SeedData {
           "java.lang.IllegalStateException: Duplicate transaction\n\tat io.clamped.demo.PaymentService.validateTransaction(PaymentService.java:55)",
           "{\"txnId\":\"TXN-8823\",\"userId\":\"usr-772\"}",
           "PaymentService.java", 55, "validateTransaction", "http-nio-8080-exec-9", "prod-web-01",
-          "OPEN", "seed-dupe-txn", 2, "45 minutes" },
+          "OPEN", "seed-dupe-txn", 2, "45 minutes", null },
 
         { "user-service",  "production", "HIGH", "auth",
           "Too many login attempts for user usr-441 — account locked",
@@ -103,7 +103,7 @@ public final class SeedData {
           "io.clamped.demo.AccountLockedException: Account locked\n\tat io.clamped.demo.AuthService.login(AuthService.java:33)",
           "{\"userId\":\"usr-441\",\"attempts\":10}",
           "AuthService.java", 33, "login", "http-nio-8080-exec-1", "prod-web-02",
-          "IN_PROGRESS", "seed-account-locked", 10, "1 hour" },
+          "IN_PROGRESS", "seed-account-locked", 10, "1 hour", null },
 
         { "user-service",  "production", "MEDIUM", "profile",
           "Profile image upload failed: file too large",
@@ -111,7 +111,7 @@ public final class SeedData {
           "io.clamped.demo.FileSizeException: Max upload size exceeded\n\tat io.clamped.demo.ProfileService.uploadAvatar(ProfileService.java:67)",
           "{\"userId\":\"usr-991\",\"sizeBytes\":15728640,\"maxBytes\":5242880}",
           "ProfileService.java", 67, "uploadAvatar", "http-nio-8080-exec-4", "prod-web-01",
-          "OPEN", "seed-upload-size", 3, "8 hours" },
+          "OPEN", "seed-upload-size", 3, "8 hours", null },
 
         { "api-gateway",   "production", "HIGH", "routing",
           "No healthy upstream found for service: recommendation-svc",
@@ -119,14 +119,14 @@ public final class SeedData {
           "io.clamped.demo.UpstreamUnavailableException: No healthy upstream\n\tat io.clamped.demo.LoadBalancer.route(LoadBalancer.java:44)",
           "{\"service\":\"recommendation-svc\",\"checkedHosts\":3}",
           "LoadBalancer.java", 44, "route", "http-nio-8080-exec-6", "prod-gateway-01",
-          "OPEN", "seed-no-upstream", 8, "3 hours" },
+          "OPEN", "seed-no-upstream", 8, "3 hours", null },
 
         { "shop-service",  "production", "MEDIUM", "checkout",
           "Promo code SAVE20 is expired",
           null, null,
           "{\"code\":\"SAVE20\",\"userId\":\"usr-553\",\"expiredAt\":\"2025-12-31\"}",
           "PromoService.java", 41, "validate", "http-nio-8080-exec-2", "prod-web-01",
-          "RESOLVED", "seed-promo-expired", 22, "6 days" },
+          "RESOLVED", "seed-promo-expired", 22, "6 days", null },
 
         { "shop-service",  "production", "CRITICAL", "database",
           "Deadlock detected on table: orders",
@@ -134,7 +134,7 @@ public final class SeedData {
           "org.postgresql.util.PSQLException: ERROR: deadlock detected\n\tat io.clamped.demo.OrderRepository.save(OrderRepository.java:88)",
           "{\"table\":\"orders\",\"pid\":4421}",
           "OrderRepository.java", 88, "save", "http-nio-8080-exec-8", "prod-web-02",
-          "OPEN", "seed-deadlock", 1, "15 minutes" },
+          "OPEN", "seed-deadlock", 1, "15 minutes", null },
 
         { "email-service", "production", "HIGH", "notifications",
           "SMTP connection refused: mail.internal:587",
@@ -142,21 +142,21 @@ public final class SeedData {
           "javax.mail.MessagingException: Could not connect to SMTP host\n\tat io.clamped.demo.EmailSender.send(EmailSender.java:31)",
           "{\"host\":\"mail.internal\",\"port\":587}",
           "EmailSender.java", 31, "send", "worker-thread-2", "prod-worker-01",
-          "IN_PROGRESS", "seed-smtp-refused", 17, "2 hours" },
+          "IN_PROGRESS", "seed-smtp-refused", 17, "2 hours", null },
 
         { "shop-service",  "staging",    "LOW", "search",
           "Search index out of sync — stale results may appear",
           null, null,
           "{\"indexAge\":\"4h32m\",\"threshold\":\"1h\"}",
           "SearchService.java", 19, "checkIndexAge", "scheduler-1", "staging-01",
-          "OPEN", "seed-index-stale", 1, "5 hours" },
+          "OPEN", "seed-index-stale", 1, "5 hours", null },
 
         { "user-service",  "production", "MEDIUM", "session",
           "Session store evicted 450 active sessions due to memory pressure",
           null, null,
           "{\"evicted\":450,\"remaining\":1240}",
           "SessionStore.java", 77, "evict", "eviction-thread", "prod-web-01",
-          "OPEN", "seed-session-evict", 3, "1 hour" },
+          "OPEN", "seed-session-evict", 3, "1 hour", null },
 
         { "shop-service",  "production", "HIGH", "orders",
           "Order fulfillment failed: warehouse API returned 503",
@@ -164,21 +164,21 @@ public final class SeedData {
           "io.clamped.demo.WarehouseException: Warehouse API unavailable\n\tat io.clamped.demo.FulfillmentService.dispatch(FulfillmentService.java:52)",
           "{\"orderId\":\"ORD-2847\",\"warehouseId\":\"WH-03\",\"statusCode\":503}",
           "FulfillmentService.java", 52, "dispatch", "worker-thread-3", "prod-worker-02",
-          "OPEN", "seed-warehouse-503", 4, "4 hours" },
+          "OPEN", "seed-warehouse-503", 4, "4 hours", null },
 
         { "api-gateway",   "production", "MEDIUM", "rate-limit",
           "Rate limit exceeded for client IP 198.51.100.22",
           null, null,
           "{\"ip\":\"198.51.100.22\",\"requestsPerMin\":320,\"limit\":100}",
           "RateLimiter.java", 29, "check", "http-nio-8080-exec-10", "prod-gateway-01",
-          "OPEN", "seed-rate-limit", 320, "2 hours" },
+          "OPEN", "seed-rate-limit", 320, "2 hours", null },
 
         { "shop-service",  "production", "LOW", "payment",
           "Refund processing delayed: payment provider queue backed up",
           null, null,
           "{\"refundId\":\"REF-441\",\"delayMs\":12000}",
           "RefundService.java", 38, "process", "worker-thread-1", "prod-worker-01",
-          "RESOLVED", "seed-refund-delay", 6, "3 days" },
+          "RESOLVED", "seed-refund-delay", 6, "3 days", null },
 
         { "user-service",  "production", "HIGH", "data",
           "Failed to serialize user preferences: unexpected null field",
@@ -186,7 +186,7 @@ public final class SeedData {
           "com.fasterxml.jackson.core.JsonProcessingException: Null value in non-nullable field\n\tat io.clamped.demo.UserSerializer.serialize(UserSerializer.java:44)",
           "{\"userId\":\"usr-219\",\"field\":\"locale\"}",
           "UserSerializer.java", 44, "serialize", "http-nio-8080-exec-5", "prod-web-02",
-          "OPEN", "seed-serialize-null", 2, "7 hours" },
+          "OPEN", "seed-serialize-null", 2, "7 hours", null },
 
         { "shop-service",  "production", "CRITICAL", "uncaught",
           "StackOverflowError in category tree renderer",
@@ -194,14 +194,14 @@ public final class SeedData {
           "java.lang.StackOverflowError\n\tat io.clamped.demo.CategoryRenderer.render(CategoryRenderer.java:12)\n\tat io.clamped.demo.CategoryRenderer.render(CategoryRenderer.java:12)",
           "{}",
           "CategoryRenderer.java", 12, "render", "http-nio-8080-exec-3", "prod-web-01",
-          "OPEN", "seed-stackoverflow", 1, "20 minutes" },
+          "OPEN", "seed-stackoverflow", 1, "20 minutes", null },
 
         { "email-service", "production", "MEDIUM", "notifications",
           "Email bounce rate above threshold: 8.3%",
           null, null,
           "{\"bounceRate\":8.3,\"threshold\":5.0,\"period\":\"1h\"}",
           "BounceMonitor.java", 55, "check", "scheduler-1", "prod-worker-01",
-          "IN_PROGRESS", "seed-bounce-rate", 1, "90 minutes" },
+          "IN_PROGRESS", "seed-bounce-rate", 1, "90 minutes", null },
 
         { "shop-service",  "staging",    "HIGH", "checkout",
           "Payment processor rejected card: invalid CVV",
@@ -209,21 +209,21 @@ public final class SeedData {
           "io.clamped.demo.CardValidationException: Invalid CVV\n\tat io.clamped.demo.PaymentService.validateCard(PaymentService.java:77)",
           "{\"maskedCard\":\"****-****-****-4242\",\"userId\":\"usr-337\"}",
           "PaymentService.java", 77, "validateCard", "http-nio-8080-exec-1", "staging-01",
-          "RESOLVED", "seed-invalid-cvv", 5, "4 days" },
+          "RESOLVED", "seed-invalid-cvv", 5, "4 days", "Staging test data issue — test card number was not in the approved list. Updated test fixtures to use Stripe's official test CVV values." },
 
         { "api-gateway",   "production", "LOW", "routing",
           "Slow upstream response from search-svc: 4200ms",
           null, null,
           "{\"service\":\"search-svc\",\"responseMs\":4200,\"threshold\":1000}",
           "LoadBalancer.java", 61, "logSlowResponse", "http-nio-8080-exec-7", "prod-gateway-01",
-          "OPEN", "seed-slow-upstream", 12, "3 hours" },
+          "OPEN", "seed-slow-upstream", 12, "3 hours", null },
 
         { "user-service",  "production", "MEDIUM", "auth",
           "Password reset token not found or already used",
           null, null,
           "{\"token\":\"abc123xyz\",\"userId\":\"usr-884\"}",
           "PasswordResetService.java", 33, "validateToken", "http-nio-8080-exec-6", "prod-web-01",
-          "OPEN", "seed-reset-token", 7, "5 hours" },
+          "OPEN", "seed-reset-token", 7, "5 hours", null },
 
         { "shop-service",  "production", "HIGH", "inventory",
           "Inventory sync failed: ERP API returned malformed JSON",
@@ -231,14 +231,14 @@ public final class SeedData {
           "com.fasterxml.jackson.core.JsonParseException: Unexpected character at position 0\n\tat io.clamped.demo.ErpClient.parseResponse(ErpClient.java:88)",
           "{\"erpEndpoint\":\"/api/stock\",\"responseSize\":0}",
           "ErpClient.java", 88, "parseResponse", "scheduler-1", "prod-worker-02",
-          "IN_PROGRESS", "seed-erp-json", 3, "6 hours" },
+          "IN_PROGRESS", "seed-erp-json", 3, "6 hours", null },
 
         { "shop-service",  "production", "LOW", "search",
           "Autocomplete index rebuild took 47s — exceeds 30s threshold",
           null, null,
           "{\"durationMs\":47200,\"thresholdMs\":30000}",
           "SearchIndexer.java", 44, "rebuild", "scheduler-1", "prod-worker-01",
-          "RESOLVED", "seed-index-slow", 2, "2 days" },
+          "RESOLVED", "seed-index-slow", 2, "2 days", null },
 
         { "api-gateway",   "production", "CRITICAL", "auth",
           "Signing key rotation failed — service will reject new tokens",
@@ -246,7 +246,7 @@ public final class SeedData {
           "java.security.KeyStoreException: Failed to load keystore\n\tat io.clamped.demo.JwtService.rotateKey(JwtService.java:19)",
           "{\"keyAlias\":\"jwt-signing-key\"}",
           "JwtService.java", 19, "rotateKey", "scheduler-1", "prod-gateway-01",
-          "OPEN", "seed-key-rotation", 1, "10 minutes" },
+          "OPEN", "seed-key-rotation", 1, "10 minutes", null },
 
         { "shop-service",  "production", "MEDIUM", "orders",
           "Shipping label generation failed for order ORD-3311",
@@ -254,14 +254,14 @@ public final class SeedData {
           "io.clamped.demo.ShippingException: Carrier API error\n\tat io.clamped.demo.ShippingService.generateLabel(ShippingService.java:61)",
           "{\"orderId\":\"ORD-3311\",\"carrier\":\"fedex\",\"errorCode\":\"ADDR_INVALID\"}",
           "ShippingService.java", 61, "generateLabel", "worker-thread-2", "prod-worker-01",
-          "OPEN", "seed-shipping-label", 4, "9 hours" },
+          "OPEN", "seed-shipping-label", 4, "9 hours", null },
 
         { "user-service",  "staging",    "LOW", "profile",
           "Avatar thumbnail generation skipped: ImageMagick not found",
           null, null,
           "{\"userId\":\"usr-114\",\"fallback\":\"original\"}",
           "ThumbnailService.java", 27, "generate", "http-nio-8080-exec-2", "staging-01",
-          "OPEN", "seed-no-imagemagick", 8, "1 day" },
+          "OPEN", "seed-no-imagemagick", 8, "1 day", null },
 
         { "shop-service",  "production", "HIGH", "checkout",
           "Tax calculation service returned 500 — using fallback rate",
@@ -269,21 +269,21 @@ public final class SeedData {
           "io.clamped.demo.TaxServiceException: Internal server error from tax API\n\tat io.clamped.demo.TaxService.calculate(TaxService.java:34)",
           "{\"orderId\":\"ORD-4490\",\"fallbackRate\":0.08}",
           "TaxService.java", 34, "calculate", "http-nio-8080-exec-4", "prod-web-01",
-          "IN_PROGRESS", "seed-tax-500", 11, "4 hours" },
+          "IN_PROGRESS", "seed-tax-500", 11, "4 hours", null },
 
         { "api-gateway",   "production", "MEDIUM", "routing",
           "Circuit breaker opened for recommendation-svc after 5 failures",
           null, null,
           "{\"service\":\"recommendation-svc\",\"failures\":5,\"state\":\"OPEN\"}",
           "CircuitBreaker.java", 52, "trip", "http-nio-8080-exec-9", "prod-gateway-01",
-          "OPEN", "seed-circuit-breaker", 1, "25 minutes" },
+          "OPEN", "seed-circuit-breaker", 1, "25 minutes", null },
 
         { "shop-service",  "production", "LOW", "cache",
           "Cache warming took longer than expected: 12s vs 3s target",
           null, null,
           "{\"durationMs\":12400,\"targetMs\":3000,\"keys\":8820}",
           "CacheWarmer.java", 38, "warm", "scheduler-1", "prod-worker-02",
-          "RESOLVED", "seed-cache-slow", 3, "8 days" },
+          "RESOLVED", "seed-cache-slow", 3, "8 days", null },
 
         { "user-service",  "production", "HIGH", "data",
           "Database migration 0042 failed — rollback applied",
@@ -291,14 +291,14 @@ public final class SeedData {
           "org.flywaydb.core.api.FlywayException: Migration failed\n\tat io.clamped.demo.MigrationRunner.run(MigrationRunner.java:22)",
           "{\"migration\":\"V0042\",\"rolledBack\":true}",
           "MigrationRunner.java", 22, "run", "main", "prod-web-01",
-          "RESOLVED", "seed-migration-fail", 1, "6 days" },
+          "RESOLVED", "seed-migration-fail", 1, "6 days", "Migration V0042 had a missing NOT NULL constraint on the new column. Fixed the migration script to include a default value. Rollback was clean, re-ran successfully." },
 
         { "shop-service",  "production", "MEDIUM", "payment",
           "Webhook delivery failed for event evt_9921: endpoint returned 404",
           null, null,
           "{\"eventId\":\"evt_9921\",\"endpoint\":\"https://partner.example.com/hooks\",\"statusCode\":404}",
           "WebhookDispatcher.java", 47, "deliver", "worker-thread-3", "prod-worker-01",
-          "OPEN", "seed-webhook-404", 6, "2 hours" },
+          "OPEN", "seed-webhook-404", 6, "2 hours", null },
 
         { "api-gateway",   "production", "HIGH", "uncaught",
           "Thread pool exhausted — requests queued beyond limit",
@@ -306,13 +306,13 @@ public final class SeedData {
           "java.util.concurrent.RejectedExecutionException: Task rejected\n\tat java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:849)",
           "{\"activeThreads\":200,\"queueSize\":500,\"limit\":500}",
           "ThreadPoolExecutor.java", 849, "reject", "http-nio-8080-exec-200", "prod-gateway-01",
-          "OPEN", "seed-thread-pool", 1, "5 minutes" },
+          "OPEN", "seed-thread-pool", 1, "5 minutes", null },
 
         { "shop-service",  "production", "LOW", "notifications",
           "Push notification delivery rate dropped to 71% — below 90% threshold",
           null, null,
           "{\"deliveryRate\":71.2,\"threshold\":90.0,\"period\":\"1h\"}",
           "PushNotificationService.java", 63, "checkDeliveryRate", "scheduler-1", "prod-worker-01",
-          "IN_PROGRESS", "seed-push-delivery", 1, "3 hours" },
+          "IN_PROGRESS", "seed-push-delivery", 1, "3 hours", null },
     };
 }

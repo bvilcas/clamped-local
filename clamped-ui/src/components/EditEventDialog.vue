@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="open" max-width="560" persistent>
-    <v-card v-if="form">
+    <v-card v-if="form" :class="{ 'dialog-light': !isDark }">
       <v-card-title class="pt-4 px-4">Edit Event #{{ event?.id }}</v-card-title>
 
       <!-- Status buttons -->
@@ -51,6 +51,9 @@
 import { ref, watch, computed } from 'vue'
 import type { ClampedEvent } from '../types'
 import { eventsApi } from '../api/client'
+import { useAppTheme } from '../theme'
+
+const { isDark } = useAppTheme()
 
 const props = defineProps<{ event: ClampedEvent | null }>()
 const emit = defineEmits<{ close: []; saved: [] }>()
@@ -152,5 +155,23 @@ async function save() {
 
 .status-btn:hover:not(.active) {
   background: rgba(255,255,255,0.05);
+}
+
+/* Light mode overrides */
+.dialog-light .status-track {
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.dialog-light .status-btn {
+  border-left-color: rgba(0, 0, 0, 0.2);
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.dialog-light .status-btn.active {
+  color: #fff;
+}
+
+.dialog-light .status-btn:hover:not(.active) {
+  background: rgba(0, 0, 0, 0.04);
 }
 </style>

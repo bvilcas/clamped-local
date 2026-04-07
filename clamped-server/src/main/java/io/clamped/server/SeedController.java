@@ -36,16 +36,17 @@ public class SeedController {
         int inserted = 0;
         for (Object[] row : selected) {
             try {
-                String interval = (String) row[16]; // last element is the interval string
+                String interval = (String) row[16];
+                String notes = (String) row[17];
                 String sql =
                     "INSERT INTO clamped_events " +
                     "(app_name, environment, severity, tag, message, exception_class, stacktrace, " +
                     " metadata, source_file, source_line, source_method, thread_name, host, " +
-                    " status, fingerprint, occurrence_count, first_seen, timestamp) VALUES " +
-                    "(?, ?, ?, ?, ?, ?, ?, ?::jsonb, ?, ?, ?, ?, ?, ?, md5(?), ?, NOW() - INTERVAL '" + interval + "', NOW())";
-                // pass all columns except the interval (last element)
-                Object[] params = new Object[row.length - 1];
-                System.arraycopy(row, 0, params, 0, params.length);
+                    " status, fingerprint, occurrence_count, first_seen, timestamp, resolution_notes) VALUES " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?::jsonb, ?, ?, ?, ?, ?, ?, md5(?), ?, NOW() - INTERVAL '" + interval + "', NOW(), ?)";
+                Object[] params = new Object[17];
+                System.arraycopy(row, 0, params, 0, 16);
+                params[16] = notes;
                 jdbc.update(sql, params);
                 inserted++;
             } catch (Exception e) {
