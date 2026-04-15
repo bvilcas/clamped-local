@@ -37,8 +37,6 @@ public final class Fingerprinter {
         return sha256(input);
     }
 
-    // Cryptographic Hashing (taking a key and converting to a fixed representaiton)
-    // SHA-256 used to compress stack traces into a stable 64-char identifier for deduplication in the DB.
     private static String sha256(String input) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");

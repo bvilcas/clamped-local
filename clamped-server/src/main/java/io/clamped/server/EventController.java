@@ -8,6 +8,14 @@ import java.util.Map;
 
 import java.util.List;
 
+/**
+ * REST boundary between the Vue dashboard and Postgres.
+ * All event mutations from the UI pass through here before reaching EventRepository.
+ *
+ * Endpoints: GET /api/events, GET/PUT/DELETE /api/events/{id},
+ * POST /api/events/{id}/resolve|ack|revert, POST /api/events/bulk/{action},
+ * DELETE /api/events/purge
+ */
 @RestController
 @RequestMapping("/api/events")
 public class EventController {
@@ -35,6 +43,7 @@ public class EventController {
         return row != null ? ResponseEntity.ok(row) : ResponseEntity.notFound().build();
     }
 
+    // Body is optional so the UI can resolve with or without a resolution note
     @PostMapping("/{id}/resolve")
     public ResponseEntity<Void> resolve(
             @PathVariable long id,

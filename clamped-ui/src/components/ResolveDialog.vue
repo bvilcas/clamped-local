@@ -38,6 +38,7 @@ const saving = ref(false)
 
 const open = computed(() => props.event !== null)
 
+// Clears the note field each time a different event opens the dialog
 watch(() => props.event, () => { notes.value = '' })
 
 async function confirm() {

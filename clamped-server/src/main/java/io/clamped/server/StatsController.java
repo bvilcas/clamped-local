@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+/**
+ * Serves aggregate data for the Stats dashboard page.
+ * All queries run directly against Postgres via JdbcTemplate rather than through EventRepository
+ * because these are read-only aggregates that don't map to EventRow.
+ */
 @RestController
 @RequestMapping("/api/stats")
 public class StatsController {

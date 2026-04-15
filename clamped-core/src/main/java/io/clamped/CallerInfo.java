@@ -22,9 +22,7 @@ public final class CallerInfo {
      * to ensure the correct frame is identified.
      */
     public static CallerInfo capture() {
-        // Stop the thread worker I am currently on and show me the pile of tasks (frames) they are currently working through.
         StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-        // For each stack trace in the stack
         for (StackTraceElement frame : stack) {
             String className = frame.getClassName();
             // Skip only the SDK's own entry-point classes and JVM thread infrastructure.

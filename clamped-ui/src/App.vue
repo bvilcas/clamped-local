@@ -111,6 +111,8 @@ const purging = ref(false)
 const purgeDays = ref(30)
 const seeding = ref(false)
 
+// Incrementing eventsKey forces the router-view to remount EventsView and re-fetch,
+// which is how seed and purge refresh the events list without a full page reload
 const eventsKey = ref(0)
 const collapsed = ref(false)
 
@@ -119,6 +121,8 @@ function goEvents() {
   eventsKey.value++
 }
 
+// Splits a "/path?key=val" string into a structured router push so quick filters
+// arrive at EventsView with the right query params pre-applied
 function go(path: string) {
   const [pathname, search] = path.split('?')
   const query = search ? Object.fromEntries(new URLSearchParams(search)) : {}

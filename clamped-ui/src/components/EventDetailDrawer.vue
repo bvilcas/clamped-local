@@ -107,6 +107,8 @@ const { isDark, severityColor, statusColor } = useAppTheme()
 const props = defineProps<{ event: ClampedEvent | null }>()
 const emit = defineEmits<{ close: [] }>()
 
+// Vuetify needs a writable v-model to control drawer visibility.
+// The drawer has no state of its own — open when an event is passed, closed when it emits close.
 const open = computed({
   get: () => props.event !== null,
   set: (v) => { if (!v) emit('close') },

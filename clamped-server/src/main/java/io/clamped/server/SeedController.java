@@ -12,6 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * Handles the "Seed Sample Data" button in the dashboard nav.
+ * Wipes the table and inserts 10 to 20 randomly selected events from SeedData.POOL.
+ * Intended for demo and development use only.
+ */
 @RestController
 @RequestMapping("/api/seed")
 public class SeedController {
@@ -36,6 +41,7 @@ public class SeedController {
         int inserted = 0;
         for (Object[] row : selected) {
             try {
+                // Indices 16 and 17 are the interval and resolution_notes fields — see SeedData column layout
                 String interval = (String) row[16];
                 String notes = (String) row[17];
                 String sql =

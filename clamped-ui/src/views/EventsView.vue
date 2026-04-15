@@ -93,11 +93,12 @@ import type { ClampedEvent } from '../types'
 
 const route = useRoute()
 const { severityColor, statusColor, resolveColor } = useAppTheme()
+// Reads query params from the URL so nav quick filters (Open, In Progress, Resolved)
+// and stats page tag/status clicks land here with filters already applied
 const initialFilters = computed<EventFilters>(() => ({
   status:   (route.query.status as string) || undefined,
   severity: (route.query.severity as string) || undefined,
   tag:      (route.query.tag as string) || undefined,
-  limit:    50,
 }))
 
 const events = ref<ClampedEvent[]>([])
@@ -108,7 +109,7 @@ const sortBy = ref<{ key: string; order: 'asc' | 'desc' }[]>([])
 const selectedEvent = ref<ClampedEvent | null>(null)
 const editingEvent = ref<ClampedEvent | null>(null)
 const resolvingEvent = ref<ClampedEvent | null>(null)
-const lastFilters = ref<EventFilters>({ status: 'OPEN', limit: 50 })
+const lastFilters = ref<EventFilters>({ status: 'OPEN' })
 
 const SEVERITY_ORDER: Record<string, number> = { LOW: 0, MEDIUM: 1, HIGH: 2, CRITICAL: 3 }
 const STATUS_ORDER: Record<string, number>   = { OPEN: 0, IN_PROGRESS: 1, RESOLVED: 2 }
@@ -137,6 +138,8 @@ async function load(filters: EventFilters) {
   }
 }
 
+// Fetches the full row so the detail drawer gets stacktrace and metadata,
+// which are omitted from the list response to keep it light
 async function viewEvent(item: ClampedEvent) {
   selectedEvent.value = await eventsApi.get(item.id)
 }
@@ -194,7 +197,10 @@ function exportCsv() {
   const rows = events.value.map(e => cols.map(({ key }) => {
     const v = (e as any)[key]
     if (v == null) return ''
-    const display = timeKeys.has(key) ? fmt(v) : String(v)
+    let display: string
+    if (timeKeys.has(key)) display = fmt(v)
+    else if (key === 'status') display = toLabel(v)
+    else display = String(v)
     return `"${display.replace(/"/g, '""')}"`
   }).join(','))
   const csv = [cols.map(c => c.label).join(','), ...rows].join('\n')
@@ -210,6 +216,7 @@ function exportCsv() {
 function customFilter(value: unknown, query: string) {
   if (!query) return true
   const q = query.toLowerCase()
+  // Also test with spaces replaced by underscores so "in progress" matches "IN_PROGRESS"
   const qUnder = q.replace(/\s+/g, '_')
   const v = String(value ?? '').toLowerCase()
   return v.includes(q) || v.includes(qUnder)

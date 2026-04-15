@@ -39,7 +39,7 @@ import java.util.function.Consumer;
  */
 public final class Clamped {
 
-    // Every thread can see new value immediately (not in CPU)
+    // volatile so user threads calling add()/flag() always see the latest values written by init()/shutdown()
     private static volatile ClampedConfig config;
     private static volatile EventQueue queue;
     private static volatile EventFlusher flusher;
@@ -52,7 +52,7 @@ public final class Clamped {
     /**
      * Initializes the SDK. Must be called once before any add() or flag() calls.
      * Safe to call again to reinitialize (will shut down the existing instance
-     * first). Only one thread can etner at a time, preventing collisions.
+     * first). Only one thread can enter at a time, preventing collisions.
      */
     public static synchronized void init(ClampedConfig cfg) {
         if (config != null) {
@@ -106,6 +106,7 @@ public final class Clamped {
             return;
         // Capture caller info first... must be before any other method calls that add
         // stack frames
+        // Must be captured before anything else adds stack frames
         CallerInfo caller = CallerInfo.capture();
 
         EventContext context = new EventContext();

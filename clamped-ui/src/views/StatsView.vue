@@ -221,6 +221,8 @@ function goTag(tag: string) {
 }
 
 
+// Trims a fully qualified class name down to the last two segments for display.
+// e.g. "java.lang.NullPointerException" → "…lang.NullPointerException"
 function shortClass(fqn: string) {
   if (!fqn) return fqn
   const parts = fqn.split('.')

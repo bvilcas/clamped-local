@@ -71,6 +71,8 @@ const statusIndex = computed(() =>
   statuses.findIndex(s => s.value === form.value?.status)
 )
 
+// Slides the colored highlight to the active status segment.
+// Each segment is 1/3 of the track width, so translateX(n * 100%) moves by exactly one segment.
 const indicatorStyle = computed(() => ({
   width: `${100 / statuses.length}%`,
   transform: `translateX(${statusIndex.value * 100}%)`,

@@ -10,6 +10,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Owns all SQL for the clamped_events table.
+ * Called by EventController for CRUD and by StatsController for aggregate queries.
+ * Does not depend on clamped-core — the schema is shared implicitly through Postgres.
+ */
 @Repository
 public class EventRepository {
 
@@ -37,6 +42,7 @@ public class EventRepository {
             params.add(severity.toUpperCase());
         }
         if (tag != null) {
+            // Partial match so searching "pay" finds "payment", case insensitive
             sql.append(" AND tag ILIKE ?");
             params.add("%" + tag + "%");
         }

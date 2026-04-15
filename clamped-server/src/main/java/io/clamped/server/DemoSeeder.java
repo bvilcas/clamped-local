@@ -56,6 +56,7 @@ public class DemoSeeder implements ApplicationRunner {
         int inserted = 0;
         for (Object[] row : selected) {
             try {
+                // Indices 16 and 17 are the interval and resolution_notes fields — see SeedData column layout
                 String interval = (String) row[16];
                 String notes = (String) row[17];
                 String sql =
