@@ -1,5 +1,7 @@
 package io.clamped.server;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +17,7 @@ import java.util.Random;
 /**
  * Handles the "Seed Sample Data" button in the dashboard nav.
  * Wipes the table and inserts 10 to 20 randomly selected events from SeedData.POOL.
- * Intended for demo and development use only.
+ * Only available when DEMO_MODE=true — returns 403 in production.
  */
 @RestController
 @RequestMapping("/api/seed")
@@ -24,12 +26,18 @@ public class SeedController {
     private final JdbcTemplate jdbc;
     private final Random random = new Random();
 
+    @Value("${demo.mode:false}")
+    private boolean demoMode;
+
     public SeedController(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
 
     @PostMapping
     public ResponseEntity<Map<String, Integer>> seed() {
+        if (!demoMode) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         jdbc.update("TRUNCATE TABLE clamped_events RESTART IDENTITY");
 
         List<Object[]> pool = new ArrayList<>(List.of(SeedData.POOL));

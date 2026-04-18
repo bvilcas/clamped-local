@@ -106,10 +106,14 @@ public class EventRepository {
 
     private static String parseDuration(String s) {
         s = s.trim().toLowerCase();
+        // Whitelist format: digits followed by a single unit character.
+        // Rejecting anything else prevents SQL injection via the INTERVAL clause.
+        if (!s.matches("\\d+[dhm]")) {
+            throw new IllegalArgumentException("Invalid since format: " + s + ". Use e.g. 24h, 7d, 30m");
+        }
         if (s.endsWith("d")) return s.replace("d", " days");
         if (s.endsWith("h")) return s.replace("h", " hours");
-        if (s.endsWith("m")) return s.replace("m", " minutes");
-        return s;
+        return s.replace("m", " minutes");
     }
 
     private static final RowMapper<EventRow> ROW_MAPPER = (rs, rowNum) -> {
