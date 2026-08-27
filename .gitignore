@@ -5,9 +5,9 @@ target/
 *.war
 *.ear
 
-# Maven wrapper
-!mvnw.cmd
-!.mvn/
+# Maven wrapper - mvnw.cmd downloads this on demand; never vendor the distro itself,
+# since *.jar above silently drops every jar in it and leaves a broken skeleton.
+.mvn/apache-maven-*/
 
 # IDE
 .idea/
@@ -40,3 +40,6 @@ logs/
 
 # Spring Boot
 clamped-server/src/main/resources/static/
+
+# graphify (generated knowledge graph output)
+graphify-out/

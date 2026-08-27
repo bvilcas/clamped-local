@@ -53,12 +53,12 @@ public class DataSourceConfig {
             }
         }
 
-        // Fall back to ~/.clamped/config.properties if no env vars set
-        if (url == null) {
+        // Fall back to ~/.clamped/config.properties for any field still unset
+        if (url == null || username == null || password == null) {
             Properties props = loadConfigFile();
-            url      = props.getProperty("jdbcUrl",  "jdbc:postgresql://localhost:5432/clamped_db");
-            username = props.getProperty("username", "postgres");
-            password = props.getProperty("password", "");
+            if (url == null)      url      = props.getProperty("jdbcUrl",  "jdbc:postgresql://localhost:5432/clamped_db");
+            if (username == null) username = props.getProperty("username", "postgres");
+            if (password == null) password = props.getProperty("password", "");
         }
 
         return DataSourceBuilder.create()
