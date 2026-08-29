@@ -85,7 +85,8 @@ derives that file from `.env` once, so you never have to re-export env vars per 
 java -jar clamped-server/target/clamped-server-1.0.0-SNAPSHOT.jar
 ```
 
-Open [http://localhost:8080](http://localhost:8080)
+This starts the backend API. Don't open a browser yet - the dashboard UI isn't
+available until step 7.
 
 ### 6. (Optional) Seed sample data
 
@@ -102,11 +103,10 @@ Two ways to get sample data in:
   ```
   Then click the nav button, or `curl -X POST http://localhost:8080/api/seed`.
 
-### 7. (Optional) Run the frontend in dev mode
+### 7. Run the frontend to see the dashboard
 
-The server jar only serves a built frontend from `clamped-server/src/main/resources/static/`,
-which is gitignored and empty until you build `clamped-ui` into it. For active frontend
-work, run Vite's dev server instead (requires Node.js - see Prerequisites):
+The server jar has no built-in UI locally, so the dashboard runs separately via Vite
+(requires Node.js - see Prerequisites):
 
 ```bash
 cd clamped-ui
@@ -114,8 +114,8 @@ npm install
 npm run dev
 ```
 
-Vite serves its own port (check the terminal output, typically `5173`) and proxies API
-calls through to the backend on `:8080` - keep both running side by side.
+Open [http://localhost:5173](http://localhost:5173) - keep this running alongside the
+server from step 5 (Vite proxies API calls through to `:8080` behind the scenes).
 
 ---
 
@@ -206,7 +206,7 @@ which puts a `clamped` command on your `PATH` (works from any shell):
 | Clicking "Seed Sample Data" does nothing | Either the backend isn't running, or `DEMO_MODE` isn't set (endpoint returns 403, and the UI has no error handling for it) | Confirm the server is up, start it with `-Ddemo.mode=true` |
 | `PSQLException: ... password is an empty string` | No `~/.clamped/config.properties` and no `CLAMPED_*`/`DATABASE_URL` env vars set | Run `scripts/setup-config.ps1` / `scripts/setup-config.sh` (Quick Start step 4) |
 | `npm` / `node` not recognized | Node.js isn't installed | See Prerequisites |
-| `localhost:8080` shows a blank/404 page instead of the dashboard | The built frontend was never copied into `clamped-server/src/main/resources/static/` (gitignored, empty by default) | Run the frontend separately with `npm run dev` in `clamped-ui/` (step 6), or build+copy `clamped-ui/dist` into that folder |
+| `localhost:8080` shows a blank/404 page instead of the dashboard | The built frontend was never copied into `clamped-server/src/main/resources/static/` (gitignored, empty by default) - expected in a local build, see step 5 | Run the frontend separately with `npm run dev` in `clamped-ui/` (step 7), or build+copy `clamped-ui/dist` into that folder |
 
 ---
 
