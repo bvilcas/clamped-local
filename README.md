@@ -2,8 +2,6 @@
 
 Self-hosted error tracking platform for Java. Drop the SDK into your app, capture exceptions in one line, and triage them from a web dashboard or terminal CLI. All data stored in your own Postgres database.
 
-No cloud. No DSN keys. No pricing tiers. Just a JAR and a dashboard you own.
-
 ---
 
 ## Features
@@ -23,12 +21,11 @@ Install these once per machine before following Quick Start:
 
 - **Java 11 JDK** (e.g. [Eclipse Adoptium](https://adoptium.net/)) - required by the parent `pom.xml`. Check with `java -version`.
 - **Docker Desktop** - runs Postgres via `docker-compose.yml`.
-- **PowerShell script execution allowed for your user** - `run.ps1` is a `.ps1` file, and PowerShell blocks those by default. Run once:
-  ```powershell
-  Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
-  ```
-  (Maven's `mvnw.cmd` is unaffected by this - it's a `.cmd` file, not `.ps1`.)
-- **Node.js LTS + npm** - only needed if you're working on the frontend (`clamped-ui/`), not for the packaged server/CLI/demo jars. Get it from [nodejs.org](https://nodejs.org) or `winget install OpenJS.NodeJS.LTS`.
+- **Node.js LTS + npm** - only needed if you're working on the frontend (`clamped-ui/`), not for the packaged server/CLI/demo jars. Get it from [nodejs.org](https://nodejs.org), `winget install OpenJS.NodeJS.LTS` (Windows), or your platform's package manager (`brew install node`, `apt install nodejs npm`, etc.).
+
+Once the jars are built and `~/.clamped/config.properties` is set up (step 4 below),
+every runnable command is identical on Windows/macOS/Linux - only the build step
+(step 3) differs by OS, since Maven's launcher is a real executable, not a portable one.
 
 ## Quick Start
 
@@ -53,38 +50,59 @@ default.
 
 ### 3. Build
 
-```bash
-./mvnw.cmd -pl clamped-core,clamped-server,clamped-cli,clamped-demo -am package -DskipTests
+**Windows:**
+```powershell
+.\mvnw.cmd -pl clamped-core,clamped-server,clamped-cli,clamped-demo -am package -DskipTests
 ```
 
-### 4. Start the server
+**macOS/Linux:**
+```bash
+./mvnw -pl clamped-core,clamped-server,clamped-cli,clamped-demo -am package -DskipTests
+```
 
-Plain `java -jar` does **not** read `.env` (only Docker Compose does), so use
-`run.ps1`, which loads `.env` into the process environment first:
+Both download their own copy of Maven 3.9.6 into `.mvn/` on first run - nothing to
+install separately, and nothing from that folder is committed to git.
 
+### 4. One-time: generate your local CLI/server config
+
+The server, CLI, and demo app all read DB credentials from `~/.clamped/config.properties`
+(same idea as `~/.aws/credentials`) when no environment variables are set. This script
+derives that file from `.env` once, so you never have to re-export env vars per session:
+
+**Windows** (requires script execution allowed once - `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`):
 ```powershell
-.\run.ps1 server
+.\scripts\setup-config.ps1
+```
+
+**macOS/Linux:**
+```bash
+./scripts/setup-config.sh
+```
+
+### 5. Start the server
+
+```bash
+java -jar clamped-server/target/clamped-server-1.0.0-SNAPSHOT.jar
 ```
 
 Open [http://localhost:8080](http://localhost:8080)
 
-### 5. (Optional) Seed sample data
+### 6. (Optional) Seed sample data
 
 Two ways to get sample data in:
 
-- **Run the demo app** - generates real events through the actual SDK pipeline:
-  ```powershell
-  .\run.ps1 demo
+- **Run the demo app** - generates events through the actual SDK pipeline:
+  ```bash
+  java -jar clamped-demo/target/clamped-demo.jar
   ```
-- **"Seed Sample Data" button / `/api/seed` endpoint** - canned data, but gated behind
-  `DEMO_MODE` (returns 403 otherwise). Set it before starting the server:
-  ```powershell
-  $env:DEMO_MODE = "true"
-  .\run.ps1 server
+- **"Seed Sample Data" button / `/api/seed` endpoint** - preset data gated behind
+  `DEMO_MODE` (returns 403 otherwise). Enable it as a JVM flag when starting the server:
+  ```bash
+  java -Ddemo.mode=true -jar clamped-server/target/clamped-server-1.0.0-SNAPSHOT.jar
   ```
   Then click the nav button, or `curl -X POST http://localhost:8080/api/seed`.
 
-### 6. (Optional) Run the frontend in dev mode
+### 7. (Optional) Run the frontend in dev mode
 
 The server jar only serves a built frontend from `clamped-server/src/main/resources/static/`,
 which is gitignored and empty until you build `clamped-ui` into it. For active frontend
@@ -157,16 +175,27 @@ Clamped.flag("Negative stock detected", ctx -> ctx
 
 ## CLI
 
-```powershell
-.\run.ps1 cli list
-.\run.ps1 cli list --status all
-.\run.ps1 cli show 42
-.\run.ps1 cli resolve 42
-.\run.ps1 cli stats
-.\run.ps1 cli purge --before 30d
+Once `~/.clamped/config.properties` exists (Quick Start step 4), the CLI jar needs no
+wrapper - run it directly, same command on every OS:
+
+```bash
+java -jar clamped-cli/target/clamped-cli-1.0.0-SNAPSHOT.jar list
+java -jar clamped-cli/target/clamped-cli-1.0.0-SNAPSHOT.jar list --status all
+java -jar clamped-cli/target/clamped-cli-1.0.0-SNAPSHOT.jar show 42
+java -jar clamped-cli/target/clamped-cli-1.0.0-SNAPSHOT.jar resolve 42
+java -jar clamped-cli/target/clamped-cli-1.0.0-SNAPSHOT.jar stats
+java -jar clamped-cli/target/clamped-cli-1.0.0-SNAPSHOT.jar purge --before 30d
 ```
 
-(`run.ps1` just loads `.env` then runs `java -jar clamped-cli/target/clamped-cli-1.0.0-SNAPSHOT.jar` with your args appended - see [Quick Start](#quick-start).)
+For a shorter `clamped list` instead of the full jar path, run the one-time installer,
+which puts a `clamped` command on your `PATH` (works from any shell):
+
+```powershell
+.\scripts\install-cli.ps1   # Windows
+```
+```bash
+./scripts/install-cli.sh    # macOS/Linux
+```
 
 ---
 
@@ -174,11 +203,8 @@ Clamped.flag("Negative stock detected", ctx -> ctx
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `running scripts is disabled on this system` | PowerShell's default execution policy blocks `.ps1` files | `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` (see Prerequisites) |
-| `-classpath requires class path specification` from `mvnw.cmd` | Vendored Maven distro under `.mvn/` is incomplete/corrupt | Delete `.mvn/apache-maven-*` and re-run `mvnw.cmd` - it downloads a fresh copy |
-| `PSQLException: ... password is an empty string` | Server started without `CLAMPED_*` env vars set (plain `java -jar` does **not** read `.env`) | Use `.\run.ps1 server` instead, which loads `.env` first |
-| `Port 8080 was already in use` | A previous server instance is still running (didn't crash - just failed its DB connection and kept Tomcat up) | Find and stop it: `netstat -ano \| findstr :8080`, then `taskkill /PID <pid> /F` |
-| Clicking "Seed Sample Data" does nothing | Either the backend isn't running, or `DEMO_MODE` isn't set (endpoint returns 403, and the UI has no error handling for it) | Confirm the server is up, set `$env:DEMO_MODE="true"` before starting it |
+| Clicking "Seed Sample Data" does nothing | Either the backend isn't running, or `DEMO_MODE` isn't set (endpoint returns 403, and the UI has no error handling for it) | Confirm the server is up, start it with `-Ddemo.mode=true` |
+| `PSQLException: ... password is an empty string` | No `~/.clamped/config.properties` and no `CLAMPED_*`/`DATABASE_URL` env vars set | Run `scripts/setup-config.ps1` / `scripts/setup-config.sh` (Quick Start step 4) |
 | `npm` / `node` not recognized | Node.js isn't installed | See Prerequisites |
 | `localhost:8080` shows a blank/404 page instead of the dashboard | The built frontend was never copied into `clamped-server/src/main/resources/static/` (gitignored, empty by default) | Run the frontend separately with `npm run dev` in `clamped-ui/` (step 6), or build+copy `clamped-ui/dist` into that folder |
 
