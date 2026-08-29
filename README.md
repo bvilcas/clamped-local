@@ -93,6 +93,8 @@ Two ways to get sample data in:
   ```
   Then click the nav button, or `curl -X POST http://localhost:8080/api/seed`.
 
+Refresh the page if no sample data appears.
+
 ### 7. Run the frontend to see the dashboard
 
 The frontend runs via Vite (requires Node.js... see Prerequisites):
