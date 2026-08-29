@@ -91,11 +91,9 @@ Two ways to get sample data in:
   ```bash
   java "-Ddemo.mode=true" -jar clamped-server/target/clamped-server-1.0.0-SNAPSHOT.jar
   ```
-  (Quote the `-D` flag - PowerShell mis-splits `-Ddemo.mode=true` into two arguments
-  when it's unquoted, and Java then tries to load `.mode=true` as the main class.)
   Then click the nav button, or `curl -X POST http://localhost:8080/api/seed`.
 
-Refresh the page if no sample data appears.
+-> Refresh the page if no sample data appears.
 
 ### 7. Run the frontend to see the dashboard
 
