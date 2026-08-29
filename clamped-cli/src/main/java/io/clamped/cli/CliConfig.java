@@ -53,7 +53,7 @@ public final class CliConfig {
         if (password == null) password = System.getenv("CLAMPED_PASSWORD");
 
         // Fallback to config file
-        if (url == null || user == null) {
+        if (url == null || user == null || password == null) {
             Properties props = loadConfigFile();
             if (url == null) url = props.getProperty("jdbcUrl");
             if (user == null) user = props.getProperty("username");

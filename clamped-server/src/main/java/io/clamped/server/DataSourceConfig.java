@@ -37,14 +37,14 @@ public class DataSourceConfig {
             if (databaseUrl != null) {
                 // Convert postgresql://user:pass@host:port/db to jdbc:postgresql://host:port/db
                 url = databaseUrl.replaceFirst("^postgresql://", "jdbc:postgresql://");
-                // Extract username and password from URL if not set separately
+                // Extract username and password from URL for any field not already set separately
                 if (username == null || password == null) {
                     try {
                         java.net.URI uri = new java.net.URI(databaseUrl.replaceFirst("^postgresql://", "http://"));
                         String userInfo = uri.getUserInfo();
                         if (userInfo != null && userInfo.contains(":")) {
-                            username = userInfo.split(":")[0];
-                            password = userInfo.split(":")[1];
+                            if (username == null) username = userInfo.split(":")[0];
+                            if (password == null) password = userInfo.split(":")[1];
                             // Remove credentials from URL
                             url = "jdbc:postgresql://" + uri.getHost() + ":" + uri.getPort() + uri.getPath();
                         }

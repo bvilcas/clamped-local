@@ -1,5 +1,4 @@
 # Shell scripts must keep LF endings even when checked out on Windows,
 # otherwise the #!/usr/bin/env bash shebang breaks on macOS/Linux.
 mvnw text eol=lf
-run.sh text eol=lf
 *.sh text eol=lf

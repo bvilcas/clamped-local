@@ -61,7 +61,7 @@
       <Transition name="fade">
         <div v-if="!collapsed" class="nav-footer">
           <div class="nav-footer-line">Clamped! Local</div>
-          <div class="nav-footer-sub">v1.0.0</div>
+          <div class="nav-footer-sub">v1.0.0-SNAPSHOT</div>
         </div>
       </Transition>
 
