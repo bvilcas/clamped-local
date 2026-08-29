@@ -23,10 +23,6 @@ Install these once per machine before following Quick Start:
 - **Docker Desktop** - runs Postgres via `docker-compose.yml`.
 - **Node.js LTS + npm** - only needed if you're working on the frontend (`clamped-ui/`), not for the packaged server/CLI/demo jars. Get it from [nodejs.org](https://nodejs.org), `winget install OpenJS.NodeJS.LTS` (Windows), or your platform's package manager (`brew install node`, `apt install nodejs npm`, etc.).
 
-Once the jars are built and `~/.clamped/config.properties` is set up (step 4 below),
-every runnable command is identical on Windows/macOS/Linux - only the build step
-(step 3) differs by OS, since Maven's launcher is a real executable, not a portable one.
-
 ## Quick Start
 
 ### 1. Configure environment variables
@@ -44,9 +40,8 @@ keep the two in sync). `.env` is gitignored and never committed.
 docker compose up -d
 ```
 
-Compose reads `.env` automatically. If you skip step 1, this fails loudly with a
-message telling you to set `POSTGRES_PASSWORD` rather than silently using a
-default.
+Compose reads `.env` automatically. If you skip step 1, this fails with a
+message: set `POSTGRES_PASSWORD` rather than using a default.
 
 ### 3. Build
 
@@ -60,14 +55,11 @@ default.
 ./mvnw -pl clamped-core,clamped-server,clamped-cli,clamped-demo -am package -DskipTests
 ```
 
-Both download their own copy of Maven 3.9.6 into `.mvn/` on first run - nothing to
-install separately, and nothing from that folder is committed to git.
-
 ### 4. One-time: generate your local CLI/server config
 
 The server, CLI, and demo app all read DB credentials from `~/.clamped/config.properties`
-(same idea as `~/.aws/credentials`) when no environment variables are set. This script
-derives that file from `.env` once, so you never have to re-export env vars per session:
+when no environment variables are set. This script reads that file from `.env` once, 
+so you never have to re-export env vars per session:
 
 **Windows** (requires script execution allowed once - `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`):
 ```powershell
@@ -85,7 +77,7 @@ derives that file from `.env` once, so you never have to re-export env vars per 
 java -jar clamped-server/target/clamped-server-1.0.0-SNAPSHOT.jar
 ```
 
-This starts the backend API. Don't open a browser yet - the dashboard UI isn't
+This starts the backend API. Don't open a browser yet as the dashboard UI isn't
 available until step 7.
 
 ### 6. (Optional) Seed sample data
@@ -97,7 +89,7 @@ Two ways to get sample data in:
   java -jar clamped-demo/target/clamped-demo.jar
   ```
 - **"Seed Sample Data" button / `/api/seed` endpoint** - preset data gated behind
-  `DEMO_MODE` (returns 403 otherwise). Enable it as a JVM flag when starting the server:
+  `DEMO_MODE`. Also a button on the UI. Enable as a JVM flag when starting the server:
   ```bash
   java -Ddemo.mode=true -jar clamped-server/target/clamped-server-1.0.0-SNAPSHOT.jar
   ```
@@ -105,8 +97,7 @@ Two ways to get sample data in:
 
 ### 7. Run the frontend to see the dashboard
 
-The server jar has no built-in UI locally, so the dashboard runs separately via Vite
-(requires Node.js - see Prerequisites):
+The frontend runs via Vite (requires Node.js - see Prerequisites):
 
 ```bash
 cd clamped-ui
@@ -115,7 +106,7 @@ npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173) - keep this running alongside the
-server from step 5 (Vite proxies API calls through to `:8080` behind the scenes).
+server from step 5 (Vite proxies API calls through to `:8080`).
 
 ---
 
@@ -175,9 +166,6 @@ Clamped.flag("Negative stock detected", ctx -> ctx
 
 ## CLI
 
-Once `~/.clamped/config.properties` exists (Quick Start step 4), the CLI jar needs no
-wrapper - run it directly, same command on every OS:
-
 ```bash
 java -jar clamped-cli/target/clamped-cli-1.0.0-SNAPSHOT.jar list
 java -jar clamped-cli/target/clamped-cli-1.0.0-SNAPSHOT.jar list --status all
@@ -187,7 +175,7 @@ java -jar clamped-cli/target/clamped-cli-1.0.0-SNAPSHOT.jar stats
 java -jar clamped-cli/target/clamped-cli-1.0.0-SNAPSHOT.jar purge --before 30d
 ```
 
-For a shorter `clamped list` instead of the full jar path, run the one-time installer,
+For a shorter command instead of the full jar path, run the one-time installer,
 which puts a `clamped` command on your `PATH` (works from any shell):
 
 ```powershell
@@ -206,7 +194,7 @@ which puts a `clamped` command on your `PATH` (works from any shell):
 | Clicking "Seed Sample Data" does nothing | Either the backend isn't running, or `DEMO_MODE` isn't set (endpoint returns 403, and the UI has no error handling for it) | Confirm the server is up, start it with `-Ddemo.mode=true` |
 | `PSQLException: ... password is an empty string` | No `~/.clamped/config.properties` and no `CLAMPED_*`/`DATABASE_URL` env vars set | Run `scripts/setup-config.ps1` / `scripts/setup-config.sh` (Quick Start step 4) |
 | `npm` / `node` not recognized | Node.js isn't installed | See Prerequisites |
-| `localhost:8080` shows a blank/404 page instead of the dashboard | The built frontend was never copied into `clamped-server/src/main/resources/static/` (gitignored, empty by default) - expected in a local build, see step 5 | Run the frontend separately with `npm run dev` in `clamped-ui/` (step 7), or build+copy `clamped-ui/dist` into that folder |
+| `localhost:8080` shows a blank/404 page instead of the dashboard | The built frontend was never copied into `clamped-server/src/main/resources/static/` (gitignored, empty by default) but rather expected in a local build, see step 5 | Run the frontend separately with `npm run dev` in `clamped-ui/` (step 7), or build+copy `clamped-ui/dist` into that folder |
 
 ---
 
