@@ -55,13 +55,11 @@ message: set `POSTGRES_PASSWORD` rather than using a default.
 ./mvnw -pl clamped-core,clamped-server,clamped-cli,clamped-demo -am package -DskipTests
 ```
 
-### 4. One-time: generate your local CLI/server config
+### 4. Set up local CLI/server config
 
-The server, CLI, and demo app all read DB credentials from `~/.clamped/config.properties`
-when no environment variables are set. This script reads that file from `.env` once, 
-so you never have to re-export env vars per session:
+The server, CLI, and demo app all read DB credentials (.env) from `~/.clamped/config.properties`. 
 
-**Windows** (requires script execution allowed once - `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`):
+**Windows** (requires script execution allowed once: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`):
 ```powershell
 .\scripts\setup-config.ps1
 ```
@@ -89,7 +87,7 @@ Two ways to get sample data in:
   java -jar clamped-demo/target/clamped-demo.jar
   ```
 - **"Seed Sample Data" button / `/api/seed` endpoint** - preset data gated behind
-  `DEMO_MODE`. Also a button on the UI. Enable as a JVM flag when starting the server:
+  `DEMO_MODE`. Also appears as a button on the UI. Enable as a JVM flag when starting the server:
   ```bash
   java -Ddemo.mode=true -jar clamped-server/target/clamped-server-1.0.0-SNAPSHOT.jar
   ```
@@ -97,7 +95,7 @@ Two ways to get sample data in:
 
 ### 7. Run the frontend to see the dashboard
 
-The frontend runs via Vite (requires Node.js - see Prerequisites):
+The frontend runs via Vite (requires Node.js... see Prerequisites):
 
 ```bash
 cd clamped-ui
@@ -105,8 +103,8 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) - keep this running alongside the
-server from step 5 (Vite proxies API calls through to `:8080`).
+Open [http://localhost:5173](http://localhost:5173) and keep it running alongside the
+server from step 5 (Vite calls the API through port `:8080`).
 
 ---
 
@@ -192,7 +190,7 @@ which puts a `clamped` command on your `PATH` (works from any shell):
 | Clicking "Seed Sample Data" does nothing | Either the backend isn't running, or `DEMO_MODE` isn't set (endpoint returns 403, and the UI has no error handling for it) | Confirm the server is up, start it with `-Ddemo.mode=true` |
 | `PSQLException: ... password is an empty string` | No `~/.clamped/config.properties` and no `CLAMPED_*`/`DATABASE_URL` env vars set | Run `scripts/setup-config.ps1` / `scripts/setup-config.sh` (Quick Start step 4) |
 | `npm` / `node` not recognized | Node.js isn't installed | See Prerequisites |
-| `localhost:8080` shows a blank/404 page instead of the dashboard | The built frontend was never copied into `clamped-server/src/main/resources/static/` (gitignored, empty by default) but rather expected in a local build, see step 5 | Run the frontend separately with `npm run dev` in `clamped-ui/` (step 7), or build+copy `clamped-ui/dist` into that folder |
+| `localhost:8080` shows a blank/404 page instead of the dashboard | The built frontend was never copied into `clamped-server/src/main/resources/static/` (gitignored, empty by default) | Run the frontend separately with `npm run dev` in `clamped-ui/` (step 7), or build+copy `clamped-ui/dist` into that folder |
 
 ---
 
