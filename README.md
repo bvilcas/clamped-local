@@ -11,7 +11,7 @@ Self-hosted error tracking platform for Java. Drop the SDK into your app, captur
 - **Web dashboard**: filterable events table, stats page, bulk actions, CSV export, resolve with notes, collapsible nav
 - **CLI**: triage events directly from the terminal without opening a browser
 - **Zero overhead**: async queue, never blocks your app
-- **Graceful degradation**: if Postgres is down, events queue in memory and drop silently
+- **Error Handling**: if Postgres is down, events queue in memory and drop seamlessly
 
 ---
 
@@ -32,7 +32,7 @@ cp .env.example .env
 ```
 
 Edit `.env` and set your own `POSTGRES_PASSWORD` (and matching `CLAMPED_PASSWORD` -
-keep the two in sync). `.env` is gitignored and never committed.
+keep the two the same). `.env` is gitignored and never committed.
 
 ### 2. Start Postgres
 
