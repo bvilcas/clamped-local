@@ -89,8 +89,10 @@ Two ways to get sample data in:
 - **"Seed Sample Data" button / `/api/seed` endpoint** - preset data gated behind
   `DEMO_MODE`. Also appears as a button on the UI. Enable as a JVM flag when starting the server:
   ```bash
-  java -Ddemo.mode=true -jar clamped-server/target/clamped-server-1.0.0-SNAPSHOT.jar
+  java "-Ddemo.mode=true" -jar clamped-server/target/clamped-server-1.0.0-SNAPSHOT.jar
   ```
+  (Quote the `-D` flag - PowerShell mis-splits `-Ddemo.mode=true` into two arguments
+  when it's unquoted, and Java then tries to load `.mode=true` as the main class.)
   Then click the nav button, or `curl -X POST http://localhost:8080/api/seed`.
 
 Refresh the page if no sample data appears.
@@ -189,7 +191,8 @@ which puts a `clamped` command on your `PATH` (works from any shell):
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| Clicking "Seed Sample Data" does nothing | Either the backend isn't running, or `DEMO_MODE` isn't set (endpoint returns 403, and the UI has no error handling for it) | Confirm the server is up, start it with `-Ddemo.mode=true` |
+| Clicking "Seed Sample Data" does nothing | Either the backend isn't running, or `DEMO_MODE` isn't set (endpoint returns 403, and the UI has no error handling for it) | Confirm the server is up, start it with `"-Ddemo.mode=true"` (quoted) |
+| `Could not find or load main class .mode=true` | PowerShell splits an unquoted `-Ddemo.mode=true` into two arguments | Quote it: `java "-Ddemo.mode=true" -jar ...` |
 | `PSQLException: ... password is an empty string` | No `~/.clamped/config.properties` and no `CLAMPED_*`/`DATABASE_URL` env vars set | Run `scripts/setup-config.ps1` / `scripts/setup-config.sh` (Quick Start step 4) |
 | `npm` / `node` not recognized | Node.js isn't installed | See Prerequisites |
 | `localhost:8080` shows a blank/404 page instead of the dashboard | The built frontend was never copied into `clamped-server/src/main/resources/static/` (gitignored, empty by default) | Run the frontend separately with `npm run dev` in `clamped-ui/` (step 7), or build+copy `clamped-ui/dist` into that folder |
