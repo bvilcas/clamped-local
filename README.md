@@ -8,7 +8,7 @@ Self-hosted error tracking platform for Java. Drop the SDK into your app, captur
 
 - **One-line error capture**: `Clamped.add(e)` in any catch block
 - **Automatic deduplication**: same error 1000 times = 1 row + occurrence counter
-- **Web dashboard**: filterable events table, stats page, bulk actions, CSV export, resolve with notes, collapsible nav, dark/light mode
+- **Web dashboard**: filterable events table, stats page, bulk actions, CSV export, resolve with notes, collapsible nav
 - **CLI**: triage events directly from the terminal without opening a browser
 - **Zero overhead**: async queue, never blocks your app
 - **Graceful degradation**: if Postgres is down, events queue in memory and drop silently
@@ -17,7 +17,7 @@ Self-hosted error tracking platform for Java. Drop the SDK into your app, captur
 
 ## Prerequisites
 
-Install these once per machine before following Quick Start:
+Install these once before following Quick Start:
 
 - **Java 11 JDK** (e.g. [Eclipse Adoptium](https://adoptium.net/)) - required by the parent `pom.xml`. Check with `java -version`.
 - **Docker Desktop** - runs Postgres via `docker-compose.yml`.
@@ -110,15 +110,13 @@ server from step 5 (Vite proxies API calls through to `:8080`).
 
 ---
 
-## SDK Integration
-
 ### Add the dependency
 
 ```xml
 <dependency>
     <groupId>io.clamped</groupId>
     <artifactId>clamped-core</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
