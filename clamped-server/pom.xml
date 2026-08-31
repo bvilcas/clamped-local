@@ -15,7 +15,7 @@
     <description>Spring Boot REST API + embedded web UI for Clamped</description>
 
     <properties>
-        <spring-boot.version>2.7.18</spring-boot.version>
+        <spring-boot.version>3.5.3</spring-boot.version>
     </properties>
 
     <dependencyManagement>

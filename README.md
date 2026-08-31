@@ -19,7 +19,7 @@ Self-hosted error tracking platform for Java. Drop the SDK into your app, captur
 
 Install these once before following Quick Start:
 
-- **Java 11 JDK** (e.g. [Eclipse Adoptium](https://adoptium.net/)) - required by the parent `pom.xml`. Check with `java -version`.
+- **Java 25 JDK** (e.g. [Eclipse Adoptium](https://adoptium.net/)) - required by the parent `pom.xml`. Check with `java -version`.
 - **Docker Desktop** - runs Postgres via `docker-compose.yml`.
 - **Node.js LTS + npm** - only needed if you're working on the frontend (`clamped-ui/`), not for the packaged server/CLI/demo jars. Get it from [nodejs.org](https://nodejs.org), `winget install OpenJS.NodeJS.LTS` (Windows), or your platform's package manager (`brew install node`, `apt install nodejs npm`, etc.).
 
