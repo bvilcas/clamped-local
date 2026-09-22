@@ -92,6 +92,7 @@ Two ways to get sample data in:
   java "-Ddemo.mode=true" -jar clamped-server/target/clamped-server-1.0.0-SNAPSHOT.jar
   ```
   Then click the nav button, or `curl -X POST http://localhost:8080/api/seed`.
+  Note: seeding runs `TRUNCATE` first, so it replaces any existing events.
 
 -> Refresh the page if no sample data appears.
 
@@ -109,6 +110,18 @@ Open [http://localhost:5173](http://localhost:5173) and keep it running alongsid
 server from step 5 (Vite calls the API through port `:8080`).
 
 ---
+
+## SDK Integration
+
+`clamped-core` isn't published to Maven Central, so it only resolves for other projects
+after you install it into your local `~/.m2` repository:
+
+```bash
+./mvnw -pl clamped-core -am install -DskipTests       # macOS/Linux
+.\mvnw.cmd -pl clamped-core -am install -DskipTests    # Windows
+```
+
+(`install`, not `package` - `package` only writes the jar to `target/`.)
 
 ### Add the dependency
 
@@ -215,11 +228,11 @@ Your Java App
 
 | Layer | Technology |
 |---|---|
-| SDK | Java, JDBC only (no Spring) |
-| Server | Spring Boot, JDBC |
+| SDK | Java 25, JDBC only (no Spring) |
+| Server | Spring Boot 3.5, JDBC |
 | Frontend | Vue 3, Vuetify, Chart.js |
 | Database | PostgreSQL |
-| CLI | Java, JDBC only |
+| CLI | Java 25, JDBC only |
 
 ---
 

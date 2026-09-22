@@ -135,6 +135,11 @@ async function doSeed() {
     const result = await maintenanceApi.seed()
     alert(`Seeded ${result.seeded} sample events`)
     eventsKey.value++
+  } catch (e: any) {
+    // 403 means the server was started without demo mode enabled
+    alert(e?.response?.status === 403
+      ? 'Seeding is disabled. Restart the server with "-Ddemo.mode=true".'
+      : `Seeding failed: ${e?.message ?? e}`)
   } finally {
     seeding.value = false
   }
@@ -148,6 +153,8 @@ async function doPurge() {
     alert(`Deleted ${result.deleted} resolved events`)
     // refresh whatever view is currently open
     eventsKey.value++
+  } catch (e: any) {
+    alert(`Purge failed: ${e?.message ?? e}`)
   } finally {
     purging.value = false
   }
